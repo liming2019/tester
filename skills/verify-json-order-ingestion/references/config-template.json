@@ -1,0 +1,119 @@
+{
+  "database": {
+    "type": "mysql",
+    "host": "<DB_HOST>",
+    "port": 3306,
+    "user": "<DB_USER>",
+    "password_env": "DB_PASSWORD",
+    "database": "<DB_NAME>",
+    "charset": "utf8mb4"
+  },
+  "source": {
+    "table": "A",
+    "id_column": "id",
+    "json_column": "source_json",
+    "where": "source_json IS NOT NULL AND source_json <> ''",
+    "order_by": ["id"]
+  },
+  "order": {
+    "table": "adapter_standard_order",
+    "primary_key": "id",
+    "business_key_column": "order_no",
+    "business_key_json_path": "$.orderNo",
+    "where": ""
+  },
+  "detail": {
+    "table": "adapter_standard_order_detail",
+    "primary_key": "id",
+    "order_fk_column": "order_id",
+    "detail_array_json_path": "$.details",
+    "order_by": ["id"],
+    "match_keys": [
+      {
+        "json_path": "$.skuId",
+        "column": "sku_id",
+        "type": "string",
+        "required": true
+      }
+    ]
+  },
+  "comparison": {
+    "decimal_scale": 2,
+    "datetime_formats": [
+      "%Y-%m-%d %H:%M:%S",
+      "%Y-%m-%dT%H:%M:%S",
+      "%Y-%m-%dT%H:%M:%S%z"
+    ],
+    "timezone": "Asia/Shanghai",
+    "empty_as_null": false
+  },
+  "checks": {
+    "source_duplicate_business_key": true,
+    "orphan_details": true,
+    "orphan_detail_limit": 100
+  },
+  "report": {
+    "title": "JSON订单入库核验报告",
+    "assumptions": [],
+    "blockers": []
+  },
+  "order_field_mappings": [
+    {
+      "json_path": "$.orderNo",
+      "column": "order_no",
+      "type": "string",
+      "required": true
+    },
+    {
+      "json_path": "$.totalAmount",
+      "column": "total_amount",
+      "type": "decimal",
+      "scale": 2,
+      "required": true
+    },
+    {
+      "json_path": "$.status",
+      "column": "order_status",
+      "type": "string",
+      "required": true,
+      "value_map": {
+        "PAID": "paid",
+        "CANCELED": "canceled"
+      }
+    },
+    {
+      "json_path": "$.createdAt",
+      "column": "created_time",
+      "type": "datetime",
+      "required": false
+    }
+  ],
+  "detail_field_mappings": [
+    {
+      "json_path": "$.skuId",
+      "column": "sku_id",
+      "type": "string",
+      "required": true
+    },
+    {
+      "json_path": "$.quantity",
+      "column": "quantity",
+      "type": "int",
+      "required": true
+    },
+    {
+      "json_path": "$.unitPrice",
+      "column": "unit_price",
+      "type": "decimal",
+      "scale": 2,
+      "required": true
+    },
+    {
+      "json_path": "$.amount",
+      "column": "amount",
+      "type": "decimal",
+      "scale": 2,
+      "required": true
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Linker网关接口测试"
+  short_description: "执行Linker直连网关加密接口测试并生成完整证据报告"
+  default_prompt: "使用 $linker-gateway-api-test 设计并执行 Linker 直连网关接口回归测试，生成证据报告。"

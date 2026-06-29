@@ -1,0 +1,4 @@
+interface:
+  display_name: "接口测试设计"
+  short_description: "基于接口契约和变更说明生成专业测试点与接口测试用例及断言策略"
+  default_prompt: "使用 $api-test-design 分析接口契约，并生成专业测试点和接口测试用例。"

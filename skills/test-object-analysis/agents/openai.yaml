@@ -1,0 +1,4 @@
+interface:
+  display_name: "测试对象分析"
+  short_description: "先拆测试对象，再生成测试场景与用例前置输入"
+  default_prompt: "Use $test-object-analysis to analyze test objects before generating test points or test cases."

@@ -1,0 +1,7 @@
+interface:
+  display_name: "蓝湖转测试用例"
+  short_description: "提取蓝湖需求并衔接测试点与测试用例生成"
+  default_prompt: "使用 $lanhu-to-testcase 提取蓝湖需求，标准化整理后继续生成测试点；仅在明确要求测试用例时再生成测试用例。"
+
+policy:
+  allow_implicit_invocation: true

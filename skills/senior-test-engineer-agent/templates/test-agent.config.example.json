@@ -1,0 +1,197 @@
+{
+  "schema_version": 2,
+  "project": {
+    "name": "<PROJECT_NAME>",
+    "type": "<WEB/API/DATA/OTHER>",
+    "business_scope": "<PROJECT_BUSINESS_SCOPE>"
+  },
+  "active_environment": "test",
+  "environment_order": [
+    "dev",
+    "test",
+    "pre",
+    "prod"
+  ],
+  "environments": {
+    "dev": {
+      "base_url": "<DEV_BASE_URL>",
+      "accounts": {
+        "default": {
+          "username": "<DEV_ACCOUNT>",
+          "password": "<DEV_PASSWORD>",
+          "token": "<DEV_TOKEN>",
+          "cookie": "<DEV_COOKIE>"
+        }
+      },
+      "databases": {
+        "primary": {
+          "type": "<mysql/postgresql/oracle/sqlserver>",
+          "host": "<DEV_DB_HOST>",
+          "port": 3306,
+          "database": "<DEV_DB_NAME>",
+          "schema": "<DEV_DB_SCHEMA>",
+          "username": "<DEV_DB_USER>",
+          "password": "<DEV_DB_PASSWORD>",
+          "read_only": false
+        }
+      },
+      "object_storages": {
+        "primary": {
+          "type": "<minio/oss/s3>",
+          "endpoint": "<DEV_STORAGE_ENDPOINT>",
+          "bucket": "<DEV_BUCKET>",
+          "access_key": "<DEV_ACCESS_KEY>",
+          "secret_key": "<DEV_SECRET_KEY>"
+        }
+      },
+      "safety": {
+        "allow_write_sql": true,
+        "require_backup_sql": true,
+        "require_rollback_sql": true,
+        "allow_performance_test": true
+      }
+    },
+    "test": {
+      "base_url": "<TEST_BASE_URL>",
+      "accounts": {
+        "default": {
+          "username": "<TEST_ACCOUNT>",
+          "password": "<TEST_PASSWORD>",
+          "token": "<TEST_TOKEN>",
+          "cookie": "<TEST_COOKIE>"
+        }
+      },
+      "databases": {
+        "primary": {
+          "type": "<mysql/postgresql/oracle/sqlserver>",
+          "host": "<TEST_DB_HOST>",
+          "port": 3306,
+          "database": "<TEST_DB_NAME>",
+          "schema": "<TEST_DB_SCHEMA>",
+          "username": "<TEST_DB_USER>",
+          "password": "<TEST_DB_PASSWORD>",
+          "read_only": false
+        }
+      },
+      "object_storages": {
+        "primary": {
+          "type": "<minio/oss/s3>",
+          "endpoint": "<TEST_STORAGE_ENDPOINT>",
+          "bucket": "<TEST_BUCKET>",
+          "access_key": "<TEST_ACCESS_KEY>",
+          "secret_key": "<TEST_SECRET_KEY>"
+        }
+      },
+      "safety": {
+        "allow_write_sql": true,
+        "require_backup_sql": true,
+        "require_rollback_sql": true,
+        "allow_performance_test": true
+      }
+    },
+    "pre": {
+      "base_url": "<PRE_BASE_URL>",
+      "accounts": {
+        "default": {
+          "username": "<PRE_ACCOUNT>",
+          "password": "<PRE_PASSWORD>",
+          "token": "<PRE_TOKEN>",
+          "cookie": "<PRE_COOKIE>"
+        }
+      },
+      "databases": {
+        "primary": {
+          "type": "<mysql/postgresql/oracle/sqlserver>",
+          "host": "<PRE_DB_HOST>",
+          "port": 3306,
+          "database": "<PRE_DB_NAME>",
+          "schema": "<PRE_DB_SCHEMA>",
+          "username": "<PRE_DB_USER>",
+          "password": "<PRE_DB_PASSWORD>",
+          "read_only": true
+        }
+      },
+      "object_storages": {
+        "primary": {
+          "type": "<minio/oss/s3>",
+          "endpoint": "<PRE_STORAGE_ENDPOINT>",
+          "bucket": "<PRE_BUCKET>",
+          "access_key": "<PRE_ACCESS_KEY>",
+          "secret_key": "<PRE_SECRET_KEY>"
+        }
+      },
+      "safety": {
+        "allow_write_sql": false,
+        "require_backup_sql": true,
+        "require_rollback_sql": true,
+        "allow_performance_test": false
+      }
+    },
+    "prod": {
+      "base_url": "<PROD_BASE_URL>",
+      "accounts": {
+        "default": {
+          "username": "<PROD_ACCOUNT>",
+          "password": "<PROD_PASSWORD>",
+          "token": "<PROD_TOKEN>",
+          "cookie": "<PROD_COOKIE>"
+        }
+      },
+      "databases": {
+        "primary": {
+          "type": "<mysql/postgresql/oracle/sqlserver>",
+          "host": "<PROD_DB_HOST>",
+          "port": 3306,
+          "database": "<PROD_DB_NAME>",
+          "schema": "<PROD_DB_SCHEMA>",
+          "username": "<PROD_DB_USER>",
+          "password": "<PROD_DB_PASSWORD>",
+          "read_only": true
+        }
+      },
+      "object_storages": {
+        "primary": {
+          "type": "<minio/oss/s3>",
+          "endpoint": "<PROD_STORAGE_ENDPOINT>",
+          "bucket": "<PROD_BUCKET>",
+          "access_key": "<PROD_ACCESS_KEY>",
+          "secret_key": "<PROD_SECRET_KEY>"
+        }
+      },
+      "safety": {
+        "allow_write_sql": false,
+        "require_backup_sql": true,
+        "require_rollback_sql": true,
+        "allow_performance_test": false
+      }
+    }
+  },
+  "paths": {
+    "upload_files": "<UPLOAD_FILES_DIR>",
+    "download_files": "<DOWNLOAD_FILES_DIR>",
+    "screenshots": "outputs/screenshots"
+  },
+  "performance": {
+    "active_profile": "baseline",
+    "profiles": {
+      "smoke": {
+        "users": 1,
+        "ramp_up_seconds": 5,
+        "duration_seconds": 60,
+        "stop_error_rate": 0.05
+      },
+      "baseline": {
+        "users": 10,
+        "ramp_up_seconds": 30,
+        "duration_seconds": 300,
+        "stop_error_rate": 0.05
+      },
+      "stress": {
+        "users": 50,
+        "ramp_up_seconds": 120,
+        "duration_seconds": 900,
+        "stop_error_rate": 0.03
+      }
+    }
+  }
+}

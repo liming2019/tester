@@ -1,0 +1,18 @@
+{
+  "fields": [
+    {
+      "json_path": "$.orderNo",
+      "name": "orderNo",
+      "comment": "订单号",
+      "type": "string",
+      "required": true
+    },
+    {
+      "json_path": "$.details[*].skuId",
+      "name": "skuId",
+      "comment": "商品SKU",
+      "type": "string",
+      "required": true
+    }
+  ]
+}

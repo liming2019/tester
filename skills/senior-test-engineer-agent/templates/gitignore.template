@@ -1,0 +1,17 @@
+# Test Agent local sensitive config
+config/test-agent.config.local.json
+.env
+.env.*
+
+# Test Agent scratch/runtime files
+work/
+automation/.pytest_cache/
+automation/**/.pytest_cache/
+automation/**/__pycache__/
+automation/**/test-results/
+automation/**/playwright-report/
+outputs/screenshots/
+
+# Logs that may contain tokens/cookies
+*.log
+*.har

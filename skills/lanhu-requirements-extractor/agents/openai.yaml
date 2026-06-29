@@ -1,0 +1,7 @@
+interface:
+  display_name: "蓝湖需求提取"
+  short_description: "登录蓝湖并结构化提取原型需求说明"
+  default_prompt: "使用 $lanhu-requirements-extractor 登录蓝湖，按来源分类提取原型需求，并输出结构化需求数据。"
+
+policy:
+  allow_implicit_invocation: true

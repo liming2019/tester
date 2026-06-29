@@ -1,0 +1,4 @@
+interface:
+  display_name: "核验 JSON 订单入库"
+  short_description: "只读核验 JSON 订单主表/明细表入库并输出中文 HTML 报告。"
+  default_prompt: "使用 $verify-json-order-ingestion 只读核验 source_json 解析写入订单主表/明细表的结果，并按总览到明细维度输出中文 HTML 报告。"

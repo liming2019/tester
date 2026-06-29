@@ -1,0 +1,64 @@
+{
+  "target": {
+    "connection": {
+      "engine": "mysql",
+      "host": "127.0.0.1",
+      "port": 3306,
+      "database": "order_center",
+      "user": "root",
+      "password": "replace_me"
+    },
+    "table": "t_order"
+  },
+  "reference": {
+    "connection": {
+      "engine": "mysql",
+      "host": "127.0.0.1",
+      "port": 3306,
+      "database": "user_center",
+      "user": "root",
+      "password": "replace_me"
+    },
+    "table": "t_user",
+    "where": "WHERE user_status = 'ACTIVE' AND is_deleted = 0",
+    "require_distinct_reference_rows": true
+  },
+  "mappings": [
+    {
+      "target_field": "user_id",
+      "reference_field": "user_id"
+    },
+    {
+      "target_field": "user_name",
+      "reference_field": "user_name"
+    }
+  ],
+  "insert_mode": "full",
+  "row_count": 5,
+  "generation_rules": {
+    "order_id": {
+      "type": "sequence",
+      "prefix": "ORD20260514",
+      "start": 1,
+      "width": 3
+    },
+    "order_status": {
+      "type": "fixed",
+      "value": "CREATED"
+    },
+    "order_amount": {
+      "type": "decimal_range",
+      "min": 100,
+      "max": 500
+    },
+    "create_time": {
+      "type": "datetime",
+      "mode": "now",
+      "format": "%Y-%m-%d %H:%M:%S"
+    },
+    "remark": {
+      "type": "fixed",
+      "value": "auto test data"
+    }
+  }
+}

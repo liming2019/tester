@@ -1,0 +1,7 @@
+interface:
+  display_name: "资深测试工程师 Agent"
+  short_description: "测试点、用例、接口、性能、自动化、数据库校验与报告"
+  default_prompt: "使用 $senior-test-engineer-agent 根据需求/原型/接口/数据库材料完成测试工作。"
+
+policy:
+  allow_implicit_invocation: true

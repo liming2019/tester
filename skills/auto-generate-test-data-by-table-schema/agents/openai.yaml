@@ -1,0 +1,4 @@
+interface:
+  display_name: "自动生成测试数据（表结构）"
+  short_description: "根据数据库表结构按强制顺序生成合规测试数据并校验。"
+  default_prompt: "Use $auto-generate-test-data-by-table-schema to generate compliant test data from a database table schema."

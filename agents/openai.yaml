@@ -1,0 +1,7 @@
+interface:
+  display_name: "资深测试工程师 Agent"
+  short_description: "长期复用的 Web 端测试工程师角色"
+  default_prompt: "使用资深测试工程师 Agent，根据需求/原型/接口/数据库材料完成测试分析、测试点、用例、脚本或报告。"
+
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,36 @@
+{
+  "target": {
+    "connection": {
+      "engine": "mysql",
+      "host": "115.191.76.118",
+      "port": 3306,
+      "database": "lianshan_rds_1864422249230344",
+      "user": "hjs",
+      "password": "Hjs@nb01"
+    },
+    "table": "lianshan_realtime_20260501"
+  },
+  "reference": {
+    "connection": {
+      "engine": "mysql",
+      "host": "10.80.80.244",
+      "port": 3306,
+      "database": "haini-view-test",
+      "user": "haini",
+      "password": "WqWK4Gr3hTdAzNEf"
+    },
+    "table": "ad_push_record",
+    "where": "WHERE push_media = 'QIANCHUAN' ",
+    "require_distinct_reference_rows": false
+  },
+  "mappings": [
+    {
+      "target_field": "advertiser_id",
+      "reference_field": "ad_account_id"
+    }
+  ],
+  "insert_mode": "full",
+  "row_count": 100,
+  "generation_rules": {
+  }
+}

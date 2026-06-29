@@ -1,0 +1,4 @@
+interface:
+  display_name: "数据库同步核验"
+  short_description: "按业务键逐条核验同步结果并输出中文HTML报告"
+  default_prompt: "Use $verify-db-sync-result to validate database-to-database sync results with business-key matching, field-comment mapping, mismatch tables, and a Chinese HTML report."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "抓取网页元素"
+  short_description: "通过 URL 和 token 抓取页面可交互元素及定位路径"
+  default_prompt: "使用 $capture-web-elements 打开目标网页，等待渲染完成后抓取可交互元素并输出多种定位路径。"

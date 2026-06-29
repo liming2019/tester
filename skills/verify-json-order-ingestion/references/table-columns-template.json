@@ -1,0 +1,24 @@
+{
+  "tables": {
+    "adapter_standard_order": [
+      {
+        "column_name": "order_no",
+        "column_comment": "订单号",
+        "data_type": "varchar",
+        "is_nullable": "NO",
+        "numeric_scale": null,
+        "ordinal_position": 1
+      }
+    ],
+    "adapter_standard_order_detail": [
+      {
+        "column_name": "sku_id",
+        "column_comment": "商品SKU",
+        "data_type": "varchar",
+        "is_nullable": "NO",
+        "numeric_scale": null,
+        "ordinal_position": 1
+      }
+    ]
+  }
+}

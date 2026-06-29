@@ -1,0 +1,30 @@
+# Local sensitive config
+.env
+.env.*
+config/test-agent.config.local.json
+**/config/test-agent.config.local.json
+**/test-agent.config.local.json
+
+# Runtime and scratch files
+work/
+outputs/
+reports/
+*.log
+*.har
+*.tmp
+*.cache
+
+# Python/runtime caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Playwright/test artifacts
+test-results/
+playwright-report/
+
+# Dependencies and OS noise
+node_modules/
+.idea/
+.DS_Store
+Thumbs.db

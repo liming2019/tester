@@ -1,0 +1,4 @@
+interface:
+  display_name: "提取功能测试点"
+  short_description: "从原型、截图和说明中提取可评审的测试点清单"
+  default_prompt: "使用 $extract-functional-test-points 从原型、截图、备注和需求变更中提取功能测试点清单。"
