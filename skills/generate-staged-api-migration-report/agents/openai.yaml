@@ -1,0 +1,4 @@
+interface:
+  display_name: "两阶段迁移报告规范"
+  short_description: "把已有两阶段迁移核验结果整理成统一中文 HTML 报告，不包含核验逻辑"
+  default_prompt: "使用 $generate-staged-api-migration-report 基于已有两阶段迁移核验结果生成统一的中文 HTML 报告。"

@@ -1,4 +1,4 @@
 interface:
   display_name: "API迁移结果核验"
-  short_description: "核验API迁移后的数据关系文件准确性"
-  default_prompt: "Use $verify-api-migration-result to verify an API-based data migration result and generate a Chinese HTML report."
+  short_description: "执行 API 迁移数据核验并输出结构化结果，供下游统一报告生成复用"
+  default_prompt: "使用 $verify-api-migration-result 执行 API 迁移结果核验，并输出可供下游报告生成复用的结构化核验结果。"

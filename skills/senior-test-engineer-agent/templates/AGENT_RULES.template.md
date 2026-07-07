@@ -112,6 +112,7 @@
 - 配置读取顺序：环境变量 → `config/test-agent.config.local.json` → `config/test-agent.config.example.json` → 向用户确认。
 - `test-agent.config.example.json` 保存全量参考结构，可包含 `schema_version`、`active_environment`、`environment_order`、`dev/test/pre/prod`、对象存储、性能配置和安全策略。
 - `test-agent.config.local.json` 保存本地实际使用配置，允许采用最小结构；只需要配置当前任务会用到的环境、账号、数据库、对象存储或路径，不强制保留所有环境和所有字段。
+- `reporting.default_generate_report=true` 表示核验任务默认继续输出报告；仅当用户明确要求“不生成报告”时才跳过。
 - 当前环境读取顺序：环境变量 `TEST_AGENT_ENV` 或 `APP_ENV` → `active_environment` → `local.environments` 中唯一已配置环境 → 用户明确指定环境 → 向用户确认。
 - 读取某环境配置时，只读取 `environments.<env>` 下已配置的 `base_url`、`accounts`、`databases`、`object_storages`、`safety`，不得混用其他环境配置。
 - 数据库默认读取 `environments.<env>.databases.primary`；若任务明确指定业务库、日志库、报表库等别名，则读取对应别名。
@@ -128,10 +129,19 @@
 - 蓝湖链接、蓝湖版本、蓝湖需求提取、蓝湖测试点或测试用例：调用 `lanhu-to-testcase`。
 - 仅提取蓝湖结构化需求：调用 `lanhu-requirements-extractor`。
 - 已有结构化需求或截图/需求材料生成测试点：调用 `extract-functional-test-points`。
-- 网页元素抓取、UI 自动化定位 YAML、表格列/弹窗元素定位：调用 `capture-web-elements`。
+- 需要编排一整条 UI 自动化定位链路，把任务拆成运行态采集、组件识别、候选定位、稳定性校验和资产沉淀时：调用 `ui-locator-orchestrator`。
+- 用户提供页面 URL、登录态或交互步骤，需要采集真实运行态 DOM、截图、a11y 或状态快照时：调用 `capture-web-runtime`。
+- 已有运行态材料，需要识别筛选区、工具栏、表格、分页、弹窗、树或页签等业务组件时：调用 `analyze-business-components`。
+- 已有结构化页面模型，需要生成候选定位并按优先级排序时：调用 `generate-locator-candidates`。
+- 已有候选定位，需要在真实页面里检查唯一性、可见性、可操作性和跨状态稳定性时：调用 `validate-locator-stability`。
+- 已有通过校验的定位，需要输出 locator YAML、Page Object 或 Playwright 自动化脚手架时：调用 `generate-automation-assets`。
+- 网页元素快速抓取、UI 自动化定位 YAML、表格列/弹窗元素定位，且用户偏向一次性直接产出可用元素清单时：调用 `capture-web-elements`。
 - SQL 批量整理、SQL HTML 管理、SQL 去重归类：调用 `sql-html-organizer`。
 - 数据库到数据库同步结果核验：调用 `verify-db-sync-result`。
-- API 迁移结果、对象存储、文件、ID 映射核验：调用 `verify-api-migration-result`。
+- 第三方接口数据先落中间表/映射表/快照表，再二次写入目标业务表，且已完成核验结果整理、当前只需按统一规范生成中文报告时：调用 `generate-staged-api-migration-report`。
+- API 迁移结果、对象存储、文件、ID 映射核验：调用 `verify-api-migration-result`；该 Skill 负责核验逻辑和结构化结果产出，不负责最终主报告排版。
+- 读取项目配置 `reporting.default_generate_report`；若该值为 `true`，则核验任务默认继续输出报告，除非用户明确要求“不生成报告”。
+- 若用户同时要求“执行 API 迁移核验 + 输出最终统一中文 HTML 报告”，或配置 `reporting.default_generate_report=true`，且链路属于“源/第三方接口 -> 中间层 -> 目标层”，则先调用 `verify-api-migration-result` 产出结构化核验结果，再调用 `generate-staged-api-migration-report` 生成主报告。
 - JSON/source_json 解析入库、订单主详表校验：调用 `verify-json-order-ingestion`。
 - 基于表结构生成测试数据：调用 `auto-generate-test-data-by-table-schema`。
 - 基于实时数据库元数据和业务规则快速构造可执行 INSERT SQL：调用 `quick-build-test-data`。

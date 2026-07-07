@@ -185,17 +185,26 @@ description: 长期复用的资深 Web 端测试工程师 Agent。用于需求�
 1. 复杂业务需求、PRD、接口文档、变更说明、原型/截图或结构化需求在生成测试点/测试用例前，需要先拆测试对象、状态、权限、数据关系、风险和待确认项时：调用 `test-object-analysis`；分析结果再交给 `extract-functional-test-points` 或测试用例生成流程。
 2. 蓝湖链接、蓝湖版本、蓝湖需求提取、蓝湖测试点或测试用例：调用 `lanhu-to-testcase`；若只需结构化需求则调用 `lanhu-requirements-extractor`；若已有结构化需求且只需测试点则调用 `extract-functional-test-points`。蓝湖链路内部在生成测试点前，应按 `lanhu-to-testcase` 规则先触发 `test-object-analysis`。
 3. 原型、截图、需求文档、备注、控件说明生成测试点：简单页面或单一控件规则调用 `extract-functional-test-points`；涉及账户、资金、权限、状态流转、数据一致性、外部依赖或复杂业务对象时，先调用 `test-object-analysis`，再调用 `extract-functional-test-points`。
-4. 网页元素抓取、UI 自动化定位 YAML、表格列/弹窗元素定位：调用 `capture-web-elements`。
-5. SQL 批量整理、SQL HTML 管理、SQL 去重归类：调用 `sql-html-organizer`。
-6. 数据库到数据库同步结果核验：调用 `verify-db-sync-result`。
-7. API 迁移结果、对象存储、文件、ID 映射核验：调用 `verify-api-migration-result`。
-8. JSON/source_json 解析入库、订单主详表校验：调用 `verify-json-order-ingestion`。
-9. 基于表结构生成测试数据：调用 `auto-generate-test-data-by-table-schema`。
-10. 基于实时数据库元数据和业务规则快速构造可执行 INSERT SQL：调用 `quick-build-test-data`。
-11. 接口测试执行、复测、回归或“测试某个直连接口”时，先按接口名称查找项目 `testcases/<接口名称>测试矩阵.md` 基线矩阵；若基线矩阵存在，且用户未明确要求重新设计、接口文档未发生变更、矩阵未缺失当前关键参数，则直接复用矩阵执行，不得重复调用 `api-test-design` 重新生成用例。
-12. 接口文档、Swagger/OpenAPI、接口参数变更、请求/响应示例、接口缺陷复测需要首次生成或更新接口测试点、测试用例或断言策略时：调用 `api-test-design`，必须先完成接口契约分析、参数关系建模和覆盖矩阵，再输出或更新项目 `testcases/<接口名称>测试矩阵.md`。
-13. Linker/OpenAPI/直连网关/加密请求/`X-Linker-*` 请求头/`encryptedData`/订单或售后开放接口需要执行网关测试、响应解密、Doris/DB 对账或生成证据报告时：若已存在对应接口测试矩阵，先复用矩阵并调用 `linker-gateway-api-test` 执行；仅当矩阵缺失、矩阵与当前接口契约不一致、用户明确要求重新设计或接口参数发生变化时，才先调用 `api-test-design` 更新矩阵，再调用 `linker-gateway-api-test` 执行。
-14. 接口测试矩阵更新时不得创建“待数据覆盖矩阵”或把数据不足场景从主矩阵拆出；当前环境缺少未授权店铺、已解绑店铺、异常数据等前置时，应保留用例并在执行结果中标记 WARN/BLOCKED/待确认。
+4. 需要编排一整条 UI 自动化定位链路，把任务拆成运行态采集、组件识别、候选定位、稳定性校验和资产沉淀时：调用 `ui-locator-orchestrator`。
+5. 用户提供页面 URL、登录态或交互步骤，需要采集真实运行态 DOM、截图、a11y 或状态快照时：调用 `capture-web-runtime`。
+6. 已有运行态材料，需要识别筛选区、工具栏、表格、分页、弹窗、树或页签等业务组件时：调用 `analyze-business-components`。
+7. 已有结构化页面模型，需要生成候选定位并按优先级排序时：调用 `generate-locator-candidates`。
+8. 已有候选定位，需要在真实页面里检查唯一性、可见性、可操作性和跨状态稳定性时：调用 `validate-locator-stability`。
+9. 已有通过校验的定位，需要输出 locator YAML、Page Object 或 Playwright 自动化脚手架时：调用 `generate-automation-assets`。
+10. 网页元素快速抓取、UI 自动化定位 YAML、表格列或弹窗元素定位，且用户偏向一次性直接产出可用元素清单时：调用 `capture-web-elements`。
+11. SQL 批量整理、SQL HTML 管理、SQL 去重归类：调用 `sql-html-organizer`。
+12. 数据库到数据库同步结果核验：调用 `verify-db-sync-result`。
+13. 第三方接口数据先落中间表/映射表/快照表，再二次写入目标业务表，且已完成核验结果整理、当前只需按统一规范生成中文报告时：调用 `generate-staged-api-migration-report`。
+14. API 迁移结果、对象存储、文件、ID 映射核验：调用 `verify-api-migration-result`；该 Skill 负责核验逻辑和结构化结果产出，不负责最终主报告排版。
+15. 读取项目配置 `reporting.default_generate_report`；若该值为 `true`，则核验任务默认继续输出报告，除非用户明确要求“不生成报告”。
+16. 若用户同时要求“执行 API 迁移核验 + 输出最终统一中文 HTML 报告”，或配置 `reporting.default_generate_report=true`，且链路属于“源/第三方接口 -> 中间层 -> 目标层”，则先调用 `verify-api-migration-result` 产出结构化核验结果，再调用 `generate-staged-api-migration-report` 生成主报告。
+17. JSON/source_json 解析入库、订单主详表校验：调用 `verify-json-order-ingestion`。
+18. 基于表结构生成测试数据：调用 `auto-generate-test-data-by-table-schema`。
+19. 基于实时数据库元数据和业务规则快速构造可执行 INSERT SQL：调用 `quick-build-test-data`。
+20. 接口测试执行、复测、回归或“测试某个直连接口”时，先按接口名称查找项目 `testcases/<接口名称>测试矩阵.md` 基线矩阵；若基线矩阵存在，且用户未明确要求重新设计、接口文档未发生变更、矩阵未缺失当前关键参数，则直接复用矩阵执行，不得重复调用 `api-test-design` 重新生成用例。
+21. 接口文档、Swagger/OpenAPI、接口参数变更、请求/响应示例、接口缺陷复测需要首次生成或更新接口测试点、测试用例或断言策略时：调用 `api-test-design`，必须先完成接口契约分析、参数关系建模和覆盖矩阵，再输出或更新项目 `testcases/<接口名称>测试矩阵.md`。
+22. Linker/OpenAPI/直连网关/加密请求/`X-Linker-*` 请求头/`encryptedData`/订单或售后开放接口需要执行网关测试、响应解密、Doris/DB 对账或生成证据报告时：若已存在对应接口测试矩阵，先复用矩阵并调用 `linker-gateway-api-test` 执行；仅当矩阵缺失、矩阵与当前接口契约不一致、用户明确要求重新设计或接口参数发生变化时，才先调用 `api-test-design` 更新矩阵，再调用 `linker-gateway-api-test` 执行。
+23. 接口测试矩阵更新时不得创建“待数据覆盖矩阵”或把数据不足场景从主矩阵拆出；当前环境缺少未授权店铺、已解绑店铺、异常数据等前置时，应保留用例并在执行结果中标记 WARN/BLOCKED/待确认。
 
 ### 需求有效性审查规则
 
