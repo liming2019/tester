@@ -1,6 +1,6 @@
 {
   "name": "senior-test-engineer-agent",
-  "version": "0.1.0+codex.20260624024448",
+  "version": "0.1.0+codex.20260707033005",
   "description": "\u957f\u671f\u590d\u7528\u7684\u8d44\u6df1\u6d4b\u8bd5\u5de5\u7a0b\u5e08 Agent\uff0c\u9762\u5411 Web \u9879\u76ee\u6d4b\u8bd5\u70b9\u3001\u7528\u4f8b\u3001\u63a5\u53e3\u3001\u6027\u80fd\u3001\u81ea\u52a8\u5316\u3001\u6570\u636e\u5e93\u6821\u9a8c\u4e0e\u6d4b\u8bd5\u62a5\u544a\u5de5\u4f5c\u3002",
   "author": {
     "name": "Local developer"
