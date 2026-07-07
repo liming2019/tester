@@ -5,6 +5,9 @@
     "type": "<WEB/API/DATA/OTHER>",
     "business_scope": "<PROJECT_BUSINESS_SCOPE>"
   },
+  "reporting": {
+    "default_generate_report": true
+  },
   "active_environment": "test",
   "environment_order": [
     "dev",

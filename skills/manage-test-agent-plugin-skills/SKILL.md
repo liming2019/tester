@@ -41,13 +41,20 @@ description: 维护资深测试工程师 Agent 插件内置 Skills。用于以 s
 2. `lanhu-to-testcase`
 3. `lanhu-requirements-extractor`
 4. `extract-functional-test-points`
-5. `capture-web-elements`
-6. `auto-generate-test-data-by-table-schema`
-7. `quick-build-test-data`
-8. `verify-db-sync-result`
-9. `verify-api-migration-result`
-10. `verify-json-order-ingestion`
-11. `sql-html-organizer`
+5. `ui-locator-orchestrator`
+6. `capture-web-runtime`
+7. `analyze-business-components`
+8. `generate-locator-candidates`
+9. `validate-locator-stability`
+10. `generate-automation-assets`
+11. `capture-web-elements`
+12. `auto-generate-test-data-by-table-schema`
+13. `quick-build-test-data`
+14. `verify-db-sync-result`
+15. `generate-staged-api-migration-report`
+16. `verify-api-migration-result`
+17. `verify-json-order-ingestion`
+18. `sql-html-organizer`
 
 ## 禁止迁移的系统 Skill
 
