@@ -140,10 +140,10 @@
 - 网页元素快速抓取、UI 自动化定位 YAML、表格列/弹窗元素定位，且用户偏向一次性直接产出可用元素清单时：调用 `capture-web-elements`。
 - SQL 批量整理、SQL HTML 管理、SQL 去重归类：调用 `sql-html-organizer`。
 - 数据库到数据库同步结果核验：调用 `verify-db-sync-result`。
-- 第三方接口数据先落中间表/映射表/快照表，再二次写入目标业务表，且已完成核验结果整理、当前只需按统一规范生成中文报告时：调用 `generate-staged-api-migration-report`。
-- API 迁移结果、对象存储、文件、ID 映射核验：调用 `verify-api-migration-result`；该 Skill 负责核验逻辑和结构化结果产出，不负责最终主报告排版。
-- 读取项目配置 `reporting.default_generate_report`；若该值为 `true`，则核验任务默认继续输出报告，除非用户明确要求“不生成报告”。
-- 若用户同时要求“执行 API 迁移核验 + 输出最终统一中文 HTML 报告”，或配置 `reporting.default_generate_report=true`，且链路属于“源/第三方接口 -> 中间层 -> 目标层”，则先调用 `verify-api-migration-result` 产出结构化核验结果，再调用 `generate-staged-api-migration-report` 生成主报告。
+- 已完成 API 迁移核验结果整理、当前只需按统一规范生成中文 HTML 报告时：调用 `generate-api-migration-report`；直连链路使用 `chain_type=direct`，两阶段、三阶段或源/第三方接口到中间层/映射层再到目标层的分阶段链路使用 `chain_type=staged`。
+- `generate-direct-api-migration-report` 和 `generate-staged-api-migration-report` 仅作为历史兼容入口保留；新任务默认使用 `generate-api-migration-report`，只有需要复用旧报告契约、旧专用脚本或排查历史报告行为时才调用旧入口。
+- API 迁移结果、对象存储、文件、ID 映射核验：调用 `verify-api-migration-result`；该 Skill 负责核验逻辑和结构化结果产出，不负责最终主报告排版，结构化结果必须标记 `chain_type=direct|staged`。
+- 若用户同时要求“执行 API 迁移核验 + 输出最终统一中文 HTML 报告”，或配置 `reporting.default_generate_report=true`，则先调用 `verify-api-migration-result` 产出结构化核验结果，再调用 `generate-api-migration-report` 生成主报告；用户明确拒绝报告时只产出结构化核验结果并说明跳过原因。
 - JSON/source_json 解析入库、订单主详表校验：调用 `verify-json-order-ingestion`。
 - 基于表结构生成测试数据：调用 `auto-generate-test-data-by-table-schema`。
 - 基于实时数据库元数据和业务规则快速构造可执行 INSERT SQL：调用 `quick-build-test-data`。

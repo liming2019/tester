@@ -1,0 +1,4 @@
+interface:
+  display_name: "直连迁移 HTML 报告生成"
+  short_description: "基于源到目标直连迁移核验结果生成正式中文 HTML 报告与脱敏明细"
+  default_prompt: "使用 $generate-direct-api-migration-report 基于已完成的源到目标直连迁移核验 JSON 生成正式中文 HTML 报告；先校验源基线、目标来源、业务键、字段规则和结论口径，再生成主报告、脱敏 JSON 明细和可选证据页，最后执行输出校验。"

@@ -1,0 +1,253 @@
+{
+  "input": {
+    "common_critical_keys": [
+      "verification_scope",
+      "source_baseline",
+      "business_keys",
+      "conclusion"
+    ],
+    "direct_critical_keys": [
+      "totals_summary"
+    ],
+    "staged_critical_keys": [
+      "staging_layer",
+      "source_to_staging_summary",
+      "staging_to_target_summary",
+      "full_chain_consistency_summary"
+    ],
+    "target_source_alternatives": [
+      "target_sources",
+      "target_source"
+    ],
+    "pass_gate_keys": [
+      "field_assignment_rules",
+      "field_accuracy_summary"
+    ],
+    "preferred_keys": [
+      "source_field_inventory",
+      "field_rule_coverage_summary",
+      "unmapped_source_fields",
+      "interface_inventory",
+      "field_accuracy_details",
+      "field_validation_coverage",
+      "field_coverage",
+      "coverage_gaps",
+      "likely_causes",
+      "time_evidence",
+      "source_fields_not_persisted",
+      "missing_in_target",
+      "extra_in_target",
+      "duplicate_in_target",
+      "duplicate_in_source",
+      "totals_summary",
+      "uniqueness_summary"
+    ],
+    "source_inventory_required_keys": [
+      "interface_name",
+      "interface_path",
+      "actual_source_fields",
+      "mapped_fields",
+      "na_fields",
+      "explicitly_uncollected_fields",
+      "unmapped_fields",
+      "note"
+    ],
+    "coverage_summary_required_keys": [
+      "actual_source_field_total",
+      "mapped_field_total",
+      "na_field_total",
+      "explicitly_uncollected_field_total",
+      "unmapped_field_total",
+      "gate_passed",
+      "note"
+    ],
+    "unmapped_source_field_required_keys": [
+      "interface_name",
+      "field_name",
+      "reason",
+      "current_status",
+      "suggested_action"
+    ],
+    "field_rule_required_keys": [
+      "interface_name",
+      "source_field_group",
+      "target_field_group",
+      "assignment_type",
+      "rule_source"
+    ],
+    "field_accuracy_required_keys": [
+      "interface_name",
+      "target_field",
+      "field_category",
+      "validation_level",
+      "validation_method",
+      "checked_count",
+      "matched_count",
+      "mismatched_count",
+      "status"
+    ],
+    "difference_sample_required_keys": [
+      "business_key",
+      "source_id",
+      "staging_id",
+      "staging_evidence",
+      "target_id",
+      "difference_type",
+      "difference_field",
+      "source_value",
+      "target_value",
+      "difference_note"
+    ]
+  },
+  "output": {
+    "chain_types": [
+      "direct",
+      "staged"
+    ],
+    "main_sections_single": [],
+    "main_sections_multi": [
+      "核验明细",
+      "核验结论概述"
+    ],
+    "interface_sections_by_chain": {
+      "direct": [
+        "接口概况",
+        "源接口字段盘点与归类",
+        "目标数据库赋值规则及核验结果",
+        "源到目标核验结果",
+        "完整性与唯一性核验结果",
+        "接口字段未入库说明",
+        "覆盖缺口与不适用说明",
+        "差异样例",
+        "接口结论"
+      ],
+      "staged": [
+        "接口概况",
+        "源接口字段盘点与归类",
+        "目标数据库赋值规则及核验结果",
+        "覆盖缺口与不适用说明",
+        "源到中间层核验结果",
+        "中间层到目标核验结果",
+        "差异样例",
+        "接口结论"
+      ]
+    },
+    "interface_sections": [
+      "接口概况",
+      "源接口字段盘点与归类",
+      "目标数据库赋值规则及核验结果",
+      "覆盖缺口与不适用说明",
+      "源到中间层核验结果",
+      "中间层到目标核验结果",
+      "差异样例",
+      "接口结论"
+    ],
+    "final_reply_fields": [
+      "summary",
+      "html_report_path",
+      "json_detail_path",
+      "interface_html_path",
+      "overall_status",
+      "critical_field_total",
+      "fields_with_rules",
+      "fields_validated",
+      "fail_fields",
+      "blocked_fields",
+      "na_fields",
+      "needs_dev_fix",
+      "input_blockers"
+    ]
+  },
+  "statuses": {
+    "overall": [
+      "PASS",
+      "WARN",
+      "FAIL",
+      "BLOCKED"
+    ],
+    "field": [
+      "PASS",
+      "WARN",
+      "FAIL",
+      "BLOCKED",
+      "N/A"
+    ],
+    "coverage": [
+      "WARN",
+      "BLOCKED",
+      "N/A"
+    ]
+  },
+  "delivery_modes": {
+    "draft": {
+      "requires_main_html": false,
+      "requires_json": true,
+      "requires_interface_pages": false
+    },
+    "standard": {
+      "requires_main_html": false,
+      "requires_json": true,
+      "requires_interface_pages": false,
+      "requires_single_detail_html": true
+    },
+    "full": {
+      "requires_main_html": true,
+      "requires_json": true,
+      "requires_interface_pages": true
+    }
+  },
+  "chain_type_keys": [
+    "chain_type",
+    "migration_chain_type",
+    "migration_type",
+    "report_chain_type"
+  ],
+  "difference_groups": [
+    "field_differences",
+    "relationship_differences",
+    "file_differences",
+    "missing_in_target",
+    "extra_in_target",
+    "duplicate_in_target",
+    "duplicate_in_source"
+  ],
+  "zero_tolerance_field_categories": [
+    "primary_key",
+    "business_unique_key",
+    "status",
+    "amount",
+    "relation",
+    "file",
+    "critical_time"
+  ],
+  "interface_identity_keys": [
+    "interface_name",
+    "interface",
+    "api_name",
+    "name"
+  ],
+  "interface_path_keys": [
+    "interface_path",
+    "path",
+    "api_path",
+    "endpoint",
+    "route",
+    "url"
+  ],
+  "interface_summary_keys": [
+    "summary",
+    "result_summary",
+    "overview",
+    "description",
+    "note",
+    "remark"
+  ],
+  "interface_reason_keys": [
+    "reason",
+    "failure_reason",
+    "failure_summary",
+    "root_cause",
+    "cause",
+    "note"
+  ]
+}

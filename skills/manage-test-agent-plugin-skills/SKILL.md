@@ -57,10 +57,12 @@ description: 维护资深测试工程师 Agent 插件内置 Skills。用于以 s
 16. `auto-generate-test-data-by-table-schema`
 17. `quick-build-test-data`
 18. `verify-db-sync-result`
-19. `generate-staged-api-migration-report`
-20. `verify-api-migration-result`
-21. `verify-json-order-ingestion`
-22. `sql-html-organizer`
+19. `generate-api-migration-report`
+20. `generate-staged-api-migration-report`
+21. `generate-direct-api-migration-report`
+22. `verify-api-migration-result`
+23. `verify-json-order-ingestion`
+24. `sql-html-organizer`
 
 ## 禁止迁移的系统 Skill
 
