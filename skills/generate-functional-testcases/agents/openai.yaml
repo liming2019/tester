@@ -1,0 +1,4 @@
+interface:
+  display_name: "功能测试用例生成"
+  short_description: "把需求、测试点或对象分析结果整理成标准功能测试用例"
+  default_prompt: "使用 $generate-functional-testcases 基于已有需求或测试点生成可评审、可执行的功能测试用例。"

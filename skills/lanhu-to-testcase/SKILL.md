@@ -1,6 +1,6 @@
 ---
 name: lanhu-to-testcase
-description: "编排蓝湖需求提取到测试资产生成的完整流程：先调用 lanhu-requirements-extractor 提取结构化需求，再按场景决定是否调用 test-object-analysis，随后调用测试点提取 Skill 生成测试点；仅当用户明确要求测试用例时，再继续生成测试用例。适用于用户提供蓝湖链接或版本，并要求提取需求、生成测试点或生成测试用例的场景。"
+description: "编排蓝湖需求提取到测试资产生成的完整流程：先调用 lanhu-requirements-extractor 提取结构化需求，再按场景决定是否调用 test-object-analysis，随后调用测试点提取 Skill 生成测试点；仅当用户明确要求测试用例时，再调用 generate-functional-testcases 生成普通功能测试用例。适用于用户提供蓝湖链接或版本，并要求提取需求、生成测试点或生成测试用例的场景。"
 ---
 
 # 蓝湖到测试资产
@@ -28,6 +28,7 @@ description: "编排蓝湖需求提取到测试资产生成的完整流程：先
 - `lanhu-requirements-extractor`：负责从蓝湖提取结构化事实。
 - `test-object-analysis`：负责复杂业务的对象建模、状态/权限/数据关系分析。
 - `extract-functional-test-points`：负责把输入材料或结构化需求挂载成可评审测试点。
+- `generate-functional-testcases`：负责把已确认测试点整理成普通功能测试用例。
 - 本 skill：只负责判断调用顺序、输入输出衔接和终点控制。
 
 ## 编排原则
@@ -87,12 +88,11 @@ description: "编排蓝湖需求提取到测试资产生成的完整流程：先
 
 ### 第四步：如用户明确要求，再生成测试用例
 
-只有当用户明确要求“测试用例”时，才继续整理为：
+只有当用户明确要求“测试用例”时，才继续调用：
 
-- 用例标题
-- 前置条件
-- 操作步骤
-- 预期结果
+- `$generate-functional-testcases`
+
+输入使用第三步产出的测试点。若用户明确要求的是“UI 自动化测试用例”“自动化用例 Markdown”或“为 Playwright 脚本准备用例”，则改用 `$generate-ui-automation-testcases`，不要把普通功能用例和 UI 自动化用例混在一个产物里。
 
 ## 下游调用约束
 
@@ -151,7 +151,7 @@ XMind 生成前必须先完成并校验页面级 `plaintext` 测试点。XMind �
 1. 蓝湖需求提取完成
 2. 如命中复杂场景，则测试对象分析完成
 3. 测试点提取完成
-4. 测试用例整理完成
+4. `generate-functional-testcases` 完成普通功能测试用例整理
 
 ## 禁止事项
 

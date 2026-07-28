@@ -43,26 +43,27 @@ description: 维护资深测试工程师 Agent 插件内置 Skills。用于以 s
 2. `lanhu-to-testcase`
 3. `lanhu-requirements-extractor`
 4. `extract-functional-test-points`
-5. `generate-ui-automation-testcases`
-6. `generate-playwright-from-ui-testcases`
-7. `ui-locator-orchestrator`
-8. `capture-web-runtime`
-9. `analyze-business-components`
-10. `generate-locator-candidates`
-11. `validate-locator-stability`
-12. `generate-automation-assets`
-13. `capture-web-elements`
-14. `api-test-design`
-15. `linker-gateway-api-test`
-16. `auto-generate-test-data-by-table-schema`
-17. `quick-build-test-data`
-18. `verify-db-sync-result`
-19. `generate-api-migration-report`
-20. `generate-staged-api-migration-report`
-21. `generate-direct-api-migration-report`
-22. `verify-api-migration-result`
-23. `verify-json-order-ingestion`
-24. `sql-html-organizer`
+5. `generate-functional-testcases`
+6. `generate-ui-automation-testcases`
+7. `generate-playwright-from-ui-testcases`
+8. `ui-locator-orchestrator`
+9. `capture-web-runtime`
+10. `analyze-business-components`
+11. `generate-locator-candidates`
+12. `validate-locator-stability`
+13. `generate-automation-assets`
+14. `capture-web-elements`
+15. `api-test-design`
+16. `linker-gateway-api-test`
+17. `auto-generate-test-data-by-table-schema`
+18. `quick-build-test-data`
+19. `verify-db-sync-result`
+20. `generate-api-migration-report`
+21. `generate-staged-api-migration-report`
+22. `generate-direct-api-migration-report`
+23. `verify-api-migration-result`
+24. `verify-json-order-ingestion`
+25. `sql-html-organizer`
 
 ## 禁止迁移的系统 Skill
 

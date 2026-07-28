@@ -129,6 +129,7 @@
 - 蓝湖链接、蓝湖版本、蓝湖需求提取、蓝湖测试点或测试用例：调用 `lanhu-to-testcase`。
 - 仅提取蓝湖结构化需求：调用 `lanhu-requirements-extractor`。
 - 已有结构化需求或截图/需求材料生成测试点：调用 `extract-functional-test-points`。
+- 已有功能测试点 Markdown、XMind 降级 Markdown、页面功能树、版本测试点清单、对象分析结果或需求摘要，需要整理为普通功能测试用例时：调用 `generate-functional-testcases`；该 Skill 输出可评审、可执行的 Markdown 功能用例，不生成接口矩阵、UI 自动化用例或 Playwright 脚本。
 - 已有测试点 Markdown、XMind 降级 Markdown、页面功能树或版本测试点清单，需要整理为标准 UI 自动化测试用例 Markdown 时：调用 `generate-ui-automation-testcases`。
 - 已有标准 UI 自动化测试用例 Markdown 和已验证定位资产，需要生成 Playwright Python 代码资产时：调用 `generate-playwright-from-ui-testcases`；默认只生成 Page Object、state setup、smoke/readonly/write/role 脚本，不默认执行。
 - 需要编排一整条 UI 自动化定位链路，把任务拆成运行态采集、组件识别、候选定位、稳定性校验和资产沉淀时：调用 `ui-locator-orchestrator`。
