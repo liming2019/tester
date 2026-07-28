@@ -1,0 +1,85 @@
+{
+  "input": {
+    "critical_keys": [
+      "verification_scope",
+      "source_baseline",
+      "business_keys",
+      "conclusion"
+    ],
+    "target_source_alternatives": [
+      "target_sources",
+      "target_source"
+    ],
+    "field_rule_alternatives": [
+      "field_mapping_summary",
+      "field_assignment_rules"
+    ],
+    "preferred_keys": [
+      "task_meta",
+      "time_evidence",
+      "totals_summary",
+      "uniqueness_summary",
+      "field_accuracy_summary",
+      "field_accuracy_details",
+      "source_fields_not_persisted",
+      "missing_in_target",
+      "extra_in_target",
+      "field_differences",
+      "duplicate_in_target",
+      "coverage_gaps",
+      "blocked_items",
+      "recommendations",
+      "source_field_inventory"
+    ]
+  },
+  "output": {
+    "main_sections": [
+      "执行摘要",
+      "迁移范围与口径",
+      "源基线证据",
+      "目标来源证据",
+      "业务键与匹配策略",
+      "完整性核验",
+      "准确性核验",
+      "接口字段未入库说明",
+      "差异与阻塞",
+      "覆盖缺口与风险",
+      "整改建议与复跑条件",
+      "附录与证据"
+    ],
+    "detail_sections": [
+      "字段准确性明细",
+      "接口字段未入库明细",
+      "差异样例明细",
+      "覆盖缺口明细",
+      "阻塞项明细"
+    ]
+  },
+  "statuses": [
+    "PASS",
+    "WARN",
+    "FAIL",
+    "BLOCKED",
+    "N/A"
+  ],
+  "sensitive_key_patterns": [
+    "password",
+    "passwd",
+    "secret",
+    "token",
+    "cookie",
+    "signature",
+    "private_key",
+    "access_key",
+    "app_secret"
+  ],
+  "zero_tolerance_categories": [
+    "business_key",
+    "primary_key",
+    "status",
+    "amount",
+    "critical_time",
+    "permission",
+    "file_url"
+  ]
+}

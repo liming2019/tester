@@ -1,4 +1,4 @@
 interface:
-  display_name: "两阶段迁移报告规范"
-  short_description: "把已有两阶段迁移核验结果整理成统一中文 HTML 报告，不包含核验逻辑"
-  default_prompt: "使用 $generate-staged-api-migration-report 基于已有两阶段迁移核验结果生成统一的中文 HTML 报告。"
+  display_name: "两阶段迁移报告生成"
+  short_description: "基于已有两阶段迁移核验结果生成中文 HTML 报告和结构化明细；单接口直接输出明细报告，多接口输出主报告导航页和分接口明细页，不包含重新核验逻辑"
+  default_prompt: "使用 $generate-staged-api-migration-report 基于已有两阶段迁移核验结构化结果生成中文 HTML 报告；先校验输入里的源接口字段盘点、字段规则覆盖和未纳入规则字段。只有一个接口时直接生成明细 HTML 和 JSON；多个接口时生成主 HTML、分接口 HTML 和 JSON。主报告只按执行结果概述、核验明细、核验结论概述组织，核验结论概述按接口分块展示，不使用列表。"

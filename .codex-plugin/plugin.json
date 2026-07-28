@@ -1,15 +1,15 @@
 {
   "name": "senior-test-engineer-agent",
-  "version": "0.1.0+codex.20260707033005",
-  "description": "\u957f\u671f\u590d\u7528\u7684\u8d44\u6df1\u6d4b\u8bd5\u5de5\u7a0b\u5e08 Agent\uff0c\u9762\u5411 Web \u9879\u76ee\u6d4b\u8bd5\u70b9\u3001\u7528\u4f8b\u3001\u63a5\u53e3\u3001\u6027\u80fd\u3001\u81ea\u52a8\u5316\u3001\u6570\u636e\u5e93\u6821\u9a8c\u4e0e\u6d4b\u8bd5\u62a5\u544a\u5de5\u4f5c\u3002",
+  "version": "0.1.0+codex.20260727013600",
+  "description": "长期复用的资深测试工程师 Agent，面向 Web 项目测试点、用例、接口、性能、自动化、数据库校验与测试报告工作。",
   "author": {
     "name": "Local developer"
   },
   "skills": "./skills/",
   "interface": {
-    "displayName": "\u8d44\u6df1\u6d4b\u8bd5\u5de5\u7a0b\u5e08 Agent",
-    "shortDescription": "\u957f\u671f\u590d\u7528\u7684 Web \u7aef\u6d4b\u8bd5\u5de5\u7a0b\u5e08\u89d2\u8272",
-    "longDescription": "\u9762\u5411\u9879\u76ee\u6d4b\u8bd5\u5de5\u4f5c\u7684\u957f\u671f\u590d\u7528 Agent\uff0c\u8986\u76d6\u9700\u6c42\u5206\u6790\u3001\u6d4b\u8bd5\u70b9\u3001\u6d4b\u8bd5\u7528\u4f8b\u3001\u529f\u80fd\u6d4b\u8bd5\u3001\u63a5\u53e3\u6d4b\u8bd5\u3001\u6027\u80fd\u6d4b\u8bd5\u3001\u81ea\u52a8\u5316\u811a\u672c\u3001\u6570\u636e\u5e93\u6821\u9a8c\u3001\u7f3a\u9677\u5b9a\u4f4d\u4e0e\u6d4b\u8bd5\u62a5\u544a\u6574\u7406\u3002",
+    "displayName": "资深测试工程师 Agent",
+    "shortDescription": "长期复用的 Web 端测试工程师角色",
+    "longDescription": "面向项目测试工作的长期复用 Agent，覆盖需求分析、测试点、测试用例、功能测试、接口测试、性能测试、自动化脚本、数据库校验、缺陷定位与测试报告整理。",
     "developerName": "Local developer",
     "category": "Productivity",
     "capabilities": [
@@ -18,9 +18,9 @@
       "Interactive"
     ],
     "defaultPrompt": [
-      "\u8ba9\u8d44\u6df1\u6d4b\u8bd5\u5de5\u7a0b\u5e08 Agent \u6839\u636e\u9700\u6c42\u751f\u6210\u6d4b\u8bd5\u70b9",
-      "\u8ba9\u8d44\u6df1\u6d4b\u8bd5\u5de5\u7a0b\u5e08 Agent \u8bbe\u8ba1\u63a5\u53e3\u6d4b\u8bd5\u7528\u4f8b",
-      "\u8ba9\u8d44\u6df1\u6d4b\u8bd5\u5de5\u7a0b\u5e08 Agent \u7f16\u5199 Playwright \u81ea\u52a8\u5316\u811a\u672c"
+      "让资深测试工程师 Agent 根据需求生成测试点",
+      "让资深测试工程师 Agent 设计接口测试用例",
+      "让资深测试工程师 Agent 编写 Playwright 自动化脚本"
     ]
   }
 }
