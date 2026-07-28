@@ -23,8 +23,8 @@ from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
 IDENT_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_$]*$")
 CAMEL_RE = re.compile(r"(?<!^)(?=[A-Z])")
-CHINESE_RE = re.compile(r"[\u4e00-\u9fff]")
-WORD_RE = re.compile(r"[A-Za-z0-9]+|[\u4e00-\u9fff]")
+CHINESE_RE = re.compile(r"[一-鿿]")
+WORD_RE = re.compile(r"[A-Za-z0-9]+|[一-鿿]")
 
 FIELD_HEADERS = {
     "field",
@@ -136,7 +136,7 @@ def normalize_header(value: str) -> str:
 
 def normalize_text(value: Any) -> str:
     text = "" if value is None else str(value)
-    text = text.replace("\u3000", " ").strip().lower()
+    text = text.replace("　", " ").strip().lower()
     text = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", " ", text)
     text = re.sub(r"[_\-/|:：,，.。;；()（）\[\]{}<>《》\"'`~!！?？\s]+", "", text)
     return text
@@ -272,7 +272,7 @@ def parse_text_fields(text: str) -> List[ApiField]:
     fields = parse_markdown_tables(text)
     seen = {f.json_path for f in fields}
     line_re = re.compile(
-        r"(?P<name>\$?\.?[A-Za-z_][A-Za-z0-9_.\[\]*-]*)\s*(?:[:：\-]|=>|->)\s*(?P<comment>[\u4e00-\u9fffA-Za-z0-9_（）()，,。.\s]{2,})"
+        r"(?P<name>\$?\.?[A-Za-z_][A-Za-z0-9_.\[\]*-]*)\s*(?:[:：\-]|=>|->)\s*(?P<comment>[一-鿿A-Za-z0-9_（）()，,。.\s]{2,})"
     )
     for line in text.splitlines():
         match = line_re.search(line.strip())

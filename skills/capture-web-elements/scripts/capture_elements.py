@@ -982,10 +982,73 @@ DOM_SNAPSHOT_JS = r"""
     ]);
   }
 
-  function businessDetails(element, role, accessName, textSnippet, attributes) {
+  function scopeTitleFromNode(root) {
+    if (!(root instanceof Element)) {
+      return "";
+    }
+
+    const selectors = [
+      ".head .title",
+      ".title",
+      ".el-dialog__title",
+      ".ant-modal-title",
+      ".modal-title",
+      "[class*='title']",
+    ];
+
+    for (const selector of selectors) {
+      const node = root.querySelector(selector);
+      const text = normalizeText(node ? (node.innerText || node.textContent || "") : "");
+      if (hasMeaningfulText(text)) {
+        return text;
+      }
+    }
+
+    return "";
+  }
+
+  function nearestBusinessScope(element) {
+    const dialog = element.closest("[data-capture-modal-root='true'], .el-dialog, [role='dialog'], .el-drawer, .ant-modal, .modal, .dialog");
+    if (dialog) {
+      const title = scopeTitleFromNode(dialog);
+      if (title) {
+        return title;
+      }
+    }
+
+    const module = element.closest(".module");
+    if (module) {
+      const title = scopeTitleFromNode(module);
+      if (title) {
+        return title;
+      }
+    }
+
+    const team = element.closest(".team");
+    if (team) {
+      const title = scopeTitleFromNode(team) || "团队管理";
+      if (title) {
+        return title;
+      }
+    }
+
+    const head = element.closest(".head");
+    if (head) {
+      const title = scopeTitleFromNode(head);
+      if (title) {
+        return title;
+      }
+    }
+
+    return "";
+  }
+
+  function businessDetails(element, role, accessName, textSnippet, attributes, interactive, interactiveReasons) {
     const tag = element.tagName.toLowerCase();
     const type = normalizeText(attributes.type).toLowerCase();
     const className = normalizeText(attributes.class).toLowerCase();
+    const style = getComputedStyle(element);
+    const businessScope = nearestBusinessScope(element);
 
     if (tableStructureTags.has(tag)) {
       if (tag !== "th") {
@@ -1030,6 +1093,7 @@ DOM_SNAPSHOT_JS = r"""
         business: true,
         business_type: "table_column",
         business_name: name,
+        business_scope: businessScope,
         reasons: ["table_header"],
       };
     }
@@ -1044,6 +1108,38 @@ DOM_SNAPSHOT_JS = r"""
     const directControl =
       ["input", "textarea", "select", "button", "a"].includes(tag) ||
       ["checkbox", "radio", "combobox", "spinbutton", "switch"].includes(role);
+
+    if (!directControl) {
+      const customActionName = firstMeaningful([
+        accessName,
+        textSnippet,
+        attributes["aria-label"],
+        attributes.title,
+        findNearbyDescriptor(element),
+      ]);
+      const customTriggerTags = new Set(["div", "span", "svg", "i", "li"]);
+      const interactiveLike =
+        interactive ||
+        style.cursor === "pointer" ||
+        element.hasAttribute("onclick") ||
+        typeof element.onclick === "function";
+      const actionLikeClass = className.includes("add") || className.includes("action") || className.includes("tool");
+
+      if (
+        customTriggerTags.has(tag) &&
+        interactiveLike &&
+        hasMeaningfulText(customActionName) &&
+        (actionLikeClass || interactiveReasons.includes("cursor_pointer") || interactiveReasons.includes("click_handler"))
+      ) {
+        return {
+          business: true,
+          business_type: "custom_action",
+          business_name: customActionName,
+          business_scope: businessScope,
+          reasons: ["custom_action", ...interactiveReasons],
+        };
+      }
+    }
 
     if (!directControl) {
       return {
@@ -1079,6 +1175,7 @@ DOM_SNAPSHOT_JS = r"""
       business: true,
       business_type: businessType,
       business_name: name,
+      business_scope: businessScope,
       reasons,
     };
   }
@@ -1086,6 +1183,7 @@ DOM_SNAPSHOT_JS = r"""
   function businessDedupeKey(item) {
     return [
       item.business_type || item.tag_name,
+      normalizeText(item.business_scope || "").toLowerCase(),
       normalizeText(item.business_name || item.accessible_name || item.text).toLowerCase(),
     ].join("|");
   }
@@ -1195,6 +1293,8 @@ DOM_SNAPSHOT_JS = r"""
       accessName,
       textSnippet,
       attributes,
+      interactive,
+      reasons,
     );
 
     if (!includeHidden && !visible) {
@@ -1253,6 +1353,7 @@ DOM_SNAPSHOT_JS = r"""
       business: Boolean(item.businessInfo.business),
       business_type: item.businessInfo.business_type || null,
       business_name: item.businessInfo.business_name || null,
+      business_scope: item.businessInfo.business_scope || null,
       business_reasons: item.businessInfo.reasons || [],
       attributes,
       bbox: {
@@ -1769,6 +1870,7 @@ BUSINESS_TYPE_TO_ELEMENT_TYPE = {
     "checkbox": "input",
     "radio": "input",
     "action_button": "button",
+    "custom_action": "button",
     "table_action": "button",
     "link_action": "link",
     "table_column": "any",
@@ -1821,6 +1923,10 @@ PHRASE_NAME_MAP = {
     "手机号": "mobile",
     "团队 新增团队": "team",
     "新增团队": "add_team",
+    "一级分类": "primary_category",
+    "二级分类": "secondary_category",
+    "关联标签组": "tag_group",
+    "添加": "add",
     "团队管理": "team_manage",
     "团队管理区": "team_panel",
     "团队列表": "team_list",
@@ -1843,6 +1949,7 @@ BUSINESS_TYPE_TO_KIND = {
     "checkbox": "field",
     "radio": "field",
     "action_button": "action",
+    "custom_action": "action",
     "table_action": "row_action",
     "table_column": "table_column",
     "link_action": "link",
@@ -1866,6 +1973,7 @@ BUSINESS_TYPE_TO_GROUP = {
     "checkbox": "filters",
     "radio": "filters",
     "action_button": "actions",
+    "custom_action": "actions",
     "table_action": "table_actions",
     "table_column": "table",
     "link_action": "actions",
@@ -1928,6 +2036,9 @@ def infer_element_name(item: dict[str, Any], used_names: dict[str, int]) -> str:
     base_label = remove_generic_prefix(normalize_label(business_name))
     base = PHRASE_NAME_MAP.get(base_label) or PHRASE_NAME_MAP.get(business_name) or snake_case(base_label)
     business_type = item.get("business_type") or ""
+    business_scope = item.get("business_scope") or ""
+    scope_label = normalize_label(business_scope)
+    scope_base = PHRASE_NAME_MAP.get(scope_label) or PHRASE_NAME_MAP.get(business_scope) or snake_case(scope_label)
 
     suffix_map = {
         "text_input": "input",
@@ -1938,6 +2049,7 @@ def infer_element_name(item: dict[str, Any], used_names: dict[str, int]) -> str:
         "checkbox": "checkbox",
         "radio": "radio",
         "action_button": "button",
+        "custom_action": "button",
         "table_action": "button",
         "table_column": "column",
         "link_action": "link",
@@ -1951,6 +2063,11 @@ def infer_element_name(item: dict[str, Any], used_names: dict[str, int]) -> str:
     }
     suffix = suffix_map.get(business_type, "element")
     candidate = f"{base}_{suffix}" if not base.endswith(f"_{suffix}") else base
+
+    if scope_base and scope_base != "element":
+        generic_bases = {"add", "element", "input", "button"}
+        if base in generic_bases or candidate in used_names:
+            candidate = f"{scope_base}_{candidate}"
 
     count = used_names.get(candidate, 0)
     used_names[candidate] = count + 1
@@ -2083,6 +2200,9 @@ def build_locator_strategies(item: dict[str, Any]) -> list[dict[str, str]]:
     if business_name and business_type in {"action_button", "table_action"}:
         button_xpath = f"//button[normalize-space(.)='{str(business_name)}']"
         add_strategy("xpath", button_xpath)
+
+    if business_name and business_type == "custom_action":
+        add_strategy("text", str(business_name))
 
     if business_name and business_type == "select":
         add_strategy("text", str(business_name))
@@ -2261,7 +2381,7 @@ def is_field_item(item: dict[str, Any]) -> bool:
 
 
 def is_action_item(item: dict[str, Any]) -> bool:
-    return (item.get("business_type") or "") in {"action_button", "link_action"}
+    return (item.get("business_type") or "") in {"action_button", "custom_action", "link_action"}
 
 
 def dedupe_for_uiproject_export(elements: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -2270,6 +2390,7 @@ def dedupe_for_uiproject_export(elements: list[dict[str, Any]]) -> list[dict[str
         "cascader": 50,
         "select": 45,
         "action_button": 40,
+        "custom_action": 39,
         "table_action": 35,
         "table_column": 34,
         "team_panel_container": 33,
@@ -2291,19 +2412,21 @@ def dedupe_for_uiproject_export(elements: list[dict[str, Any]]) -> list[dict[str
         if not name:
             continue
         business_type = item.get("business_type") or "any"
+        business_scope = normalize_label((item.get("business_scope") or "").strip())
         scope = "modal" if is_modal_item(item) else "page"
+        scope_key = f"{scope}::{business_scope}" if business_scope else scope
         if business_type == "table_column":
             dedupe_key = f"table_column::{name}"
         elif business_type.startswith("team_panel_"):
             dedupe_key = f"team_panel::{business_type}::{name}"
         elif business_type == "table_action":
             dedupe_key = f"table_action::{name}"
-        elif business_type == "action_button":
-            dedupe_key = f"{scope}::action::{name}"
+        elif business_type in {"action_button", "custom_action"}:
+            dedupe_key = f"{scope_key}::action::{name}"
         elif business_type in {"text_input", "textarea", "number_input", "select", "cascader", "checkbox", "radio"}:
-            dedupe_key = f"{scope}::field::{name}"
+            dedupe_key = f"{scope_key}::field::{name}"
         else:
-            dedupe_key = f"{scope}::{business_type}::{name}"
+            dedupe_key = f"{scope_key}::{business_type}::{name}"
 
         current = chosen.get(dedupe_key)
         if not current:
@@ -2833,6 +2956,17 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="After clicking a keyword-matched button, wait for and capture the opened modal/dialog only.",
     )
+    parser.add_argument(
+        "--expand-safe-dynamic",
+        action="store_true",
+        help="Discover safe dynamic triggers on the page, expand them one by one, and capture per-state artifacts.",
+    )
+    parser.add_argument(
+        "--max-dynamic-triggers",
+        type=int,
+        default=12,
+        help="Maximum number of safe dynamic triggers to expand when --expand-safe-dynamic is enabled.",
+    )
     return parser.parse_args()
 
 
@@ -2980,7 +3114,9 @@ def clear_modal_markers(page: Any) -> None:
 
 
 def click_keyword_button(page: Any, keywords: list[str]) -> str | None:
-    locator = page.locator("button, [role='button']")
+    locator = page.locator(
+        "button, [role='button'], .add, [class*='add'], [class*='action'], [class*='tool']"
+    )
     count = locator.count()
     for index in range(count):
         button = locator.nth(index)
@@ -2990,6 +3126,22 @@ def click_keyword_button(page: Any, keywords: list[str]) -> str | None:
         except PlaywrightError:
             continue
 
+        try:
+            shell_like = button.evaluate(
+                """
+                (node) => {
+                  const shell = node.closest(
+                    'nav, aside, header, [role="menu"], [role="menuitem"], .el-menu, .el-sub-menu, .el-menu-item, .menu-item'
+                  );
+                  return Boolean(shell);
+                }
+                """
+            )
+            if shell_like:
+                continue
+        except PlaywrightError:
+            pass
+
         text = ""
         try:
             text = (button.inner_text() or "").strip()
@@ -2998,6 +3150,11 @@ def click_keyword_button(page: Any, keywords: list[str]) -> str | None:
         if not text:
             try:
                 text = (button.get_attribute("aria-label") or "").strip()
+            except PlaywrightError:
+                text = ""
+        if not text:
+            try:
+                text = (button.get_attribute("title") or "").strip()
             except PlaywrightError:
                 text = ""
 
@@ -3095,6 +3252,378 @@ def trigger_modal_capture(page: Any, args: argparse.Namespace) -> dict[str, Any]
     return payload
 
 
+SAFE_DYNAMIC_KEYWORDS = (
+    "新增",
+    "添加",
+    "编辑",
+    "设置",
+    "更多",
+    "展开",
+)
+
+
+def slugify_text(value: str) -> str:
+    value = normalize_label(value)
+    value = re.sub(r"[^0-9a-zA-Z一-鿿]+", "_", value)
+    value = value.strip("_").lower()
+    value = re.sub(r"_+", "_", value)
+    return value or "state"
+
+
+def candidate_click_score(candidate: dict[str, Any]) -> int:
+    strategy = str(candidate.get("strategy") or "")
+    selector_type = str(candidate.get("selector_type") or "")
+    unique = candidate.get("unique_in_frame") is True
+    score = 0
+    if unique:
+        score += 100
+    if strategy in {"id_css", "css_path", "href_css", "team_panel_add_css", "team_panel_items_css"}:
+        score += 50
+    elif strategy in {"id_xpath", "xpath_absolute", "href_xpath", "team_panel_add_xpath"}:
+        score += 45
+    elif strategy in {"role_name", "text_playwright"}:
+        score += 35
+    elif strategy in {"text_xpath", "class_combo_css", "class_xpath"}:
+        score += 25
+
+    if selector_type == "css":
+        score += 10
+    elif selector_type == "playwright":
+        score += 8
+    elif selector_type == "xpath":
+        score += 6
+
+    return score
+
+
+def choose_click_candidate(item: dict[str, Any]) -> dict[str, Any] | None:
+    candidates = item.get("locator_candidates", []) or []
+    if not candidates:
+        return None
+
+    sorted_candidates = sorted(candidates, key=candidate_click_score, reverse=True)
+    for candidate in sorted_candidates:
+        selector_type = str(candidate.get("selector_type") or "")
+        value = str(candidate.get("value") or "")
+        if not value:
+            continue
+        if selector_type in {"css", "xpath", "playwright"}:
+            return candidate
+    return None
+
+
+def build_locator_from_candidate(page: Any, candidate: dict[str, Any]) -> Any:
+    selector_type = str(candidate.get("selector_type") or "")
+    value = str(candidate.get("value") or "")
+    if selector_type == "css":
+        return page.locator(value)
+    if selector_type == "xpath":
+        return page.locator(f"xpath={value}")
+    if selector_type == "playwright":
+        role_match = re.fullmatch(r'page\.getByRole\("([^"]+)", \{ name: "([^"]*)" \}\)', value)
+        if role_match:
+            role_name, access_name = role_match.groups()
+            kwargs = {"name": access_name} if access_name else {}
+            return page.get_by_role(role_name, **kwargs)
+        text_match = re.fullmatch(r'page\.getByText\("([^"]+)", \{ exact: true \}\)', value)
+        if text_match:
+            return page.get_by_text(text_match.group(1), exact=True)
+    raise ValueError(f"Unsupported click candidate: {candidate}")
+
+
+def is_safe_dynamic_trigger(item: dict[str, Any]) -> bool:
+    business_type = str(item.get("business_type") or "")
+    business_name = str(item.get("business_name") or item.get("accessible_name") or item.get("text") or "").strip()
+    class_name = str((item.get("attributes") or {}).get("class") or "")
+    scope = str(item.get("business_scope") or "")
+
+    if not business_name and "add" not in class_name.lower():
+        return False
+
+    if business_type not in {
+        "action_button",
+        "custom_action",
+        "table_action",
+        "team_panel_action",
+        "team_panel_expand_toggle",
+        "team_panel_item_menu",
+    }:
+        return False
+
+    shell_scope = normalize_label(scope)
+    if shell_scope in {"系统管理", "内容管理", "后台管理"}:
+        return False
+
+    if any(keyword in business_name for keyword in SAFE_DYNAMIC_KEYWORDS):
+        return True
+
+    return "add" in class_name.lower()
+
+
+def business_item_score(item: dict[str, Any]) -> int:
+    attrs = item.get("attributes") or {}
+    class_name = str(attrs.get("class") or "").lower()
+    preferred = item.get("preferred_locators") or {}
+    primary = preferred.get("primary") or {}
+    business_name = str(item.get("business_name") or item.get("accessible_name") or item.get("text") or "").strip()
+    tag_name = str(item.get("tag_name") or "").lower()
+
+    score = 0
+    if tag_name == "button":
+        score += 40
+    if tag_name == "input":
+        score += 35
+    if tag_name == "textarea":
+        score += 34
+    if tag_name == "select":
+        score += 33
+    if business_name:
+        score += 15
+    if isinstance(primary, dict) and primary.get("unique_in_frame") is True:
+        score += 10
+    if preferred.get("playwright"):
+        score += 8
+    if attrs.get("placeholder"):
+        score += 4
+    if "el-select__input" in class_name:
+        score -= 12
+    if "el-cascader__search-input" in class_name:
+        score -= 8
+    return score
+
+
+def dedupe_dynamic_triggers(elements: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    chosen: dict[str, dict[str, Any]] = {}
+    for item in elements:
+        if not is_safe_dynamic_trigger(item):
+            continue
+        key = "||".join(
+            [
+                str(item.get("business_type") or ""),
+                normalize_label(str(item.get("business_scope") or "")),
+                normalize_label(str(item.get("business_name") or item.get("accessible_name") or item.get("text") or "")),
+            ]
+        )
+        current = chosen.get(key)
+        if current is None or business_item_score(item) > business_item_score(current):
+            chosen[key] = item
+    return list(chosen.values())
+
+
+def open_target_page(
+    page: Any,
+    *,
+    target_url: str,
+    args: argparse.Namespace,
+) -> None:
+    page.goto(target_url, wait_until=args.wait_until, timeout=args.timeout_ms)
+    wait_for_page(page, args)
+    if args.auto_scroll:
+        auto_scroll(page)
+        if args.settle_ms > 0:
+            page.wait_for_timeout(args.settle_ms)
+
+
+def capture_state_elements(
+    page: Any,
+    *,
+    args: argparse.Namespace,
+    scope_selector: str | None = None,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
+    original_scope = args.scope_selector
+    args.scope_selector = scope_selector
+    frame_results: list[dict[str, Any]] = []
+    skipped_frames: list[dict[str, Any]] = []
+    elements: list[dict[str, Any]] = []
+    for frame_index, frame in enumerate(page.frames):
+        try:
+            result = capture_frame(frame, frame_index, args)
+        except PlaywrightError as exc:
+            skipped_frames.append(
+                {
+                    "frame_index": frame_index,
+                    "frame_name": frame.name or "",
+                    "frame_url": frame.url,
+                    "reason": str(exc),
+                }
+            )
+            continue
+        if result.get("error"):
+            skipped_frames.append(
+                {
+                    "frame_index": frame_index,
+                    "frame_name": frame.name or "",
+                    "frame_url": frame.url,
+                    "reason": result["error"],
+                }
+            )
+            continue
+        frame_results.append(result)
+        elements.extend(result.get("elements", []))
+
+    if args.capture_mode == "business":
+        for frame_index, frame in enumerate(page.frames):
+            try:
+                elements.extend(collect_table_headers(frame, frame_index))
+            except PlaywrightError:
+                continue
+            try:
+                elements.extend(collect_team_panel(frame, frame_index))
+            except PlaywrightError:
+                continue
+            if scope_selector:
+                try:
+                    extras = collect_modal_extras(frame, frame_index, scope_selector)
+                    for element in extras:
+                        element.setdefault("frame", {})["modal_scope"] = True
+                    elements.extend(extras)
+                except PlaywrightError:
+                    continue
+
+    args.scope_selector = original_scope
+    return frame_results, skipped_frames, elements
+
+
+def capture_dynamic_states(
+    *,
+    context: Any,
+    args: argparse.Namespace,
+    target_url: str,
+    output_dir: Path,
+    base_elements: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    if not args.expand_safe_dynamic or args.scope_selector:
+        return []
+
+    triggers = dedupe_dynamic_triggers(base_elements)[: max(args.max_dynamic_triggers, 0) or None]
+    if not triggers:
+        return []
+
+    dynamic_root = output_dir / "dynamic_states"
+    dynamic_root.mkdir(parents=True, exist_ok=True)
+    states: list[dict[str, Any]] = []
+
+    for index, trigger in enumerate(triggers):
+        candidate = choose_click_candidate(trigger)
+        if not candidate:
+            states.append(
+                {
+                    "index": index,
+                    "trigger_name": trigger.get("business_name"),
+                    "trigger_scope": trigger.get("business_scope"),
+                    "reason": "no_click_candidate",
+                    "state_type": "skipped",
+                }
+            )
+            continue
+
+        page = context.new_page()
+        try:
+            open_target_page(page, target_url=target_url, args=args)
+            locator = build_locator_from_candidate(page, candidate)
+            if locator.count() < 1 or not locator.first.is_visible():
+                states.append(
+                    {
+                        "index": index,
+                        "trigger_name": trigger.get("business_name"),
+                        "trigger_scope": trigger.get("business_scope"),
+                        "reason": "trigger_not_visible",
+                        "state_type": "skipped",
+                    }
+                )
+                page.close()
+                continue
+
+            before_url = page.url
+            clear_modal_markers(page)
+            locator.first.click()
+            page.wait_for_timeout(max(args.settle_ms, 1200))
+            dynamic_modal_timeout_ms = max(1000, min(args.timeout_ms, 5000))
+            modal_capture = wait_and_mark_visible_modal(page, timeout_ms=dynamic_modal_timeout_ms)
+            modal_capture["button_text"] = trigger.get("business_name")
+
+            state_scope = modal_capture.get("scope_selector")
+            state_type = "modal" if modal_capture.get("reason") == "ok" and state_scope else "page"
+            state_name_seed = (
+                modal_capture.get("modal_title")
+                or f"{trigger.get('business_scope') or ''}_{trigger.get('business_name') or ''}"
+                or f"state_{index}"
+            )
+            state_slug = slugify_text(state_name_seed)
+            state_dir = dynamic_root / f"{index:02d}-{state_slug}"
+            state_dir.mkdir(parents=True, exist_ok=True)
+
+            frame_results, skipped_frames, state_elements = capture_state_elements(
+                page,
+                args=args,
+                scope_selector=state_scope,
+            )
+            screenshot_path = state_dir / "page.png"
+            page.screenshot(path=str(screenshot_path), full_page=True)
+            final_url = page.url
+            title = page.title()
+
+            state_args = argparse.Namespace(**vars(args))
+            state_args.output_dir = str(state_dir)
+            state_args.scope_selector = state_scope
+            summary = build_summary(
+                args=state_args,
+                auth=ResolvedAuth(args.auth_mode, args.auth_key, args.auth_scheme, True),
+                output_dir=state_dir,
+                target_url=target_url,
+                final_url=final_url,
+                title=title,
+                frame_results=frame_results,
+                skipped_frames=skipped_frames,
+                screenshot_path=screenshot_path,
+                modal_capture=modal_capture if state_type == "modal" else None,
+            )
+            summary["state_type"] = state_type
+            summary["trigger"] = {
+                "business_name": trigger.get("business_name"),
+                "business_scope": trigger.get("business_scope"),
+                "candidate": candidate,
+                "navigated": final_url != before_url,
+            }
+            state_args.export_locator_yaml = str(state_dir / f"{state_slug}.yaml")
+            state_args.export_uiproject_yaml = None
+            state_args.export_page_name = f"{trigger.get('business_scope') or ''}-{trigger.get('business_name') or ''}".strip("-") or state_slug
+            state_args.export_page_url = urlparse(final_url).path or "/"
+            exported_yaml = export_yaml_if_needed(
+                state_args,
+                state_elements,
+                final_url,
+                modal_capture=modal_capture if state_type == "modal" else None,
+            )
+            if exported_yaml:
+                summary["artifacts"]["locator_yaml"] = exported_yaml
+            write_json(state_dir / "elements.json", state_elements)
+            write_ndjson(state_dir / "elements.ndjson", state_elements)
+            write_json(state_dir / "summary.json", summary)
+
+            states.append(
+                {
+                    "index": index,
+                    "state_name": state_slug,
+                    "state_type": state_type,
+                    "trigger_name": trigger.get("business_name"),
+                    "trigger_scope": trigger.get("business_scope"),
+                    "final_url": final_url,
+                    "summary_json": str(state_dir / "summary.json"),
+                    "elements_json": str(state_dir / "elements.json"),
+                    "locator_yaml": exported_yaml,
+                    "screenshot": str(screenshot_path),
+                }
+            )
+        finally:
+            try:
+                page.close()
+            except Exception:
+                pass
+
+    return states
+
+
 def capture_frame(frame: Any, frame_index: int, args: argparse.Namespace) -> dict[str, Any]:
     snapshot = frame.evaluate(
         DOM_SNAPSHOT_JS,
@@ -3177,6 +3706,7 @@ def build_summary(
     skipped_frames: list[dict[str, Any]],
     screenshot_path: Path | None,
     modal_capture: dict[str, Any] | None = None,
+    dynamic_states: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     total_dom_elements = sum(result.get("total_dom_elements", 0) for result in frame_results)
     total_captured = sum(result.get("returned_count", 0) for result in frame_results)
@@ -3223,9 +3753,11 @@ def build_summary(
             "elements_json": str(output_dir / "elements.json"),
             "elements_ndjson": str(output_dir / "elements.ndjson"),
             "screenshot": str(screenshot_path) if screenshot_path else None,
+            "dynamic_states_json": str(output_dir / "dynamic_states.json") if dynamic_states else None,
         },
         "skipped_frames": skipped_frames,
         "modal_capture": modal_capture,
+        "dynamic_states": dynamic_states or [],
     }
 
 
@@ -3373,6 +3905,14 @@ def main() -> int:
                         continue
             args.scope_selector = original_scope_selector
 
+        dynamic_states: list[dict[str, Any]] = capture_dynamic_states(
+            context=context,
+            args=args,
+            target_url=target_url,
+            output_dir=output_dir,
+            base_elements=elements,
+        )
+
         if args.save_screenshot:
             screenshot_path = output_dir / "page.png"
             page.screenshot(path=str(screenshot_path), full_page=True)
@@ -3391,6 +3931,7 @@ def main() -> int:
             skipped_frames=skipped_frames,
             screenshot_path=screenshot_path,
             modal_capture=modal_capture,
+            dynamic_states=dynamic_states,
         )
         summary["runtime_seconds"] = round(time.perf_counter() - browser_start, 3)
         exported_yaml = export_yaml_if_needed(args, elements, final_url, modal_capture=modal_capture)
@@ -3399,6 +3940,8 @@ def main() -> int:
 
         write_json(output_dir / "elements.json", elements)
         write_ndjson(output_dir / "elements.ndjson", elements)
+        if dynamic_states:
+            write_json(output_dir / "dynamic_states.json", dynamic_states)
         write_json(output_dir / "summary.json", summary)
 
         browser.close()

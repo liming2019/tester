@@ -1,4 +1,4 @@
 interface:
   display_name: "API迁移结果核验"
-  short_description: "执行 API 迁移数据核验，默认衔接 HTML 报告生成"
-  default_prompt: "使用 $verify-api-migration-result 执行 API 迁移结果核验，输出结构化核验结果，并在用户未明确拒绝测试包报告或 HTML 报告时继续调用 $generate-api-migration-report 生成正式中文 HTML 报告。"
+  short_description: "执行 API 迁移数据核验并输出结构化结果，供下游统一报告生成复用"
+  default_prompt: "使用 $verify-api-migration-result 执行 API 迁移结果核验，并输出可供下游报告生成复用的结构化核验结果。"

@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "UI Runtime Capture Manifest",
+  "description": "Shared runtime-capture contract for the capture-web-runtime skill and downstream UI locator skills.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "page_title",
+    "final_url",
+    "capture_mode",
+    "states",
+    "artifacts"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "page_title": {
+      "type": "string"
+    },
+    "final_url": {
+      "type": "string"
+    },
+    "entry_path": {
+      "type": "string"
+    },
+    "captured_at": {
+      "type": "string",
+      "description": "ISO 8601 timestamp."
+    },
+    "capture_mode": {
+      "type": "string",
+      "enum": [
+        "business",
+        "interactive",
+        "all"
+      ]
+    },
+    "states": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/state"
+      }
+    },
+    "anomalies": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/anomaly"
+      }
+    },
+    "artifacts": {
+      "$ref": "#/$defs/artifacts"
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "$defs": {
+    "state": {
+      "type": "object",
+      "required": [
+        "key",
+        "description"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+$"
+        },
+        "description": {
+          "type": "string"
+        },
+        "triggered_by": {
+          "type": "string"
+        },
+        "wait_condition": {
+          "type": "string"
+        },
+        "scope_selector": {
+          "type": "string"
+        }
+      }
+    },
+    "anomaly": {
+      "type": "object",
+      "required": [
+        "kind",
+        "description"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "iframe",
+            "shadow_dom",
+            "portal",
+            "virtual_list",
+            "lazy_load",
+            "network_delay",
+            "auth_popup",
+            "custom"
+          ]
+        },
+        "description": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        }
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "required": [
+        "summary",
+        "screenshots",
+        "snapshots",
+        "events"
+      ],
+      "properties": {
+        "summary": {
+          "type": "string"
+        },
+        "screenshots": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/fileRef"
+          }
+        },
+        "snapshots": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/fileRef"
+          }
+        },
+        "events": {
+          "type": "string"
+        }
+      }
+    },
+    "fileRef": {
+      "type": "object",
+      "required": [
+        "path"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "UI Locator Candidate Set",
+  "description": "Shared locator-candidate contract for UI locator skills.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "page_key",
+    "candidates"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "page_key": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$"
+    },
+    "generated_from_states": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "candidates": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-z0-9_]+$": {
+          "$ref": "#/$defs/candidateEntry"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "candidateEntry": {
+      "type": "object",
+      "required": [
+        "element_kind",
+        "scope",
+        "primary"
+      ],
+      "properties": {
+        "element_kind": {
+          "type": "string"
+        },
+        "scope": {
+          "type": "string"
+        },
+        "collection": {
+          "type": "boolean"
+        },
+        "applies_in": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "primary": {
+          "$ref": "#/$defs/strategy"
+        },
+        "fallbacks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/strategy"
+          }
+        },
+        "risk_tags": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/riskTag"
+          }
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "strategy": {
+      "type": "object",
+      "required": [
+        "type",
+        "path"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "test_id",
+            "role",
+            "label",
+            "placeholder",
+            "text",
+            "css",
+            "xpath",
+            "relative",
+            "expression"
+          ]
+        },
+        "path": {
+          "type": "string"
+        },
+        "why": {
+          "type": "string"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "riskTag": {
+      "type": "string",
+      "enum": [
+        "fragile",
+        "text-duplicate-risk",
+        "dynamic-attribute",
+        "state-dependent",
+        "i18n-sensitive",
+        "needs-testability-contract"
+      ]
+    }
+  }
+}

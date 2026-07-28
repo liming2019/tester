@@ -1,0 +1,4 @@
+interface:
+  display_name: "生成候选定位"
+  short_description: "为业务元素生成按优先级排序的候选定位、作用域和风险标记"
+  default_prompt: "使用 $generate-locator-candidates 为结构化页面元素生成候选定位策略并按稳定性优先级排序。"

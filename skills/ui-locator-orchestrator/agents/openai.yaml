@@ -1,0 +1,4 @@
+interface:
+  display_name: "UI定位流程编排"
+  short_description: "串联真实页面采集、组件识别、定位校验与自动化资产输出流程"
+  default_prompt: "使用 $ui-locator-orchestrator 规划并编排一条 UI 自动化定位产线，从页面采集到定位校验再到资产沉淀。"

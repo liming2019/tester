@@ -1,0 +1,257 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "UI Locator Page Model",
+  "description": "Shared page-model contract for UI locator skills.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "page",
+    "regions"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "page": {
+      "type": "object",
+      "required": [
+        "key",
+        "name"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+$"
+        },
+        "name": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "entry_path": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "states": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/state"
+      }
+    },
+    "regions": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-z0-9_]+$": {
+          "$ref": "#/$defs/region"
+        }
+      }
+    },
+    "ambiguities": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ambiguity"
+      }
+    }
+  },
+  "$defs": {
+    "state": {
+      "type": "object",
+      "required": [
+        "key",
+        "description"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+$"
+        },
+        "description": {
+          "type": "string"
+        },
+        "triggered_by": {
+          "type": "string"
+        }
+      }
+    },
+    "region": {
+      "type": "object",
+      "required": [
+        "kind",
+        "description"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "filters",
+            "toolbar",
+            "table",
+            "pagination",
+            "modal",
+            "drawer",
+            "tabs",
+            "tree",
+            "panel",
+            "summary",
+            "custom"
+          ]
+        },
+        "description": {
+          "type": "string"
+        },
+        "applies_in": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "container": {
+          "$ref": "#/$defs/element"
+        },
+        "fields": {
+          "type": "object",
+          "patternProperties": {
+            "^[a-z0-9_]+$": {
+              "$ref": "#/$defs/element"
+            }
+          }
+        },
+        "actions": {
+          "type": "object",
+          "patternProperties": {
+            "^[a-z0-9_]+$": {
+              "$ref": "#/$defs/element"
+            }
+          }
+        },
+        "columns": {
+          "type": "object",
+          "patternProperties": {
+            "^[a-z0-9_]+$": {
+              "$ref": "#/$defs/column"
+            }
+          }
+        },
+        "row_actions": {
+          "type": "object",
+          "patternProperties": {
+            "^[a-z0-9_]+$": {
+              "$ref": "#/$defs/element"
+            }
+          }
+        },
+        "items": {
+          "type": "object",
+          "patternProperties": {
+            "^[a-z0-9_]+$": {
+              "$ref": "#/$defs/element"
+            }
+          }
+        },
+        "children": {
+          "type": "object",
+          "patternProperties": {
+            "^[a-z0-9_]+$": {
+              "$ref": "#/$defs/region"
+            }
+          }
+        }
+      }
+    },
+    "element": {
+      "type": "object",
+      "required": [
+        "kind",
+        "description"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "input",
+            "select",
+            "date",
+            "button",
+            "checkbox",
+            "radio",
+            "link",
+            "text",
+            "table_row_action",
+            "collection",
+            "custom"
+          ]
+        },
+        "description": {
+          "type": "string"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "semantic": {
+          "type": "string"
+        },
+        "applies_in": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "source_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "column": {
+      "type": "object",
+      "required": [
+        "header_text"
+      ],
+      "properties": {
+        "header_text": {
+          "type": "string"
+        },
+        "cell_kind": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "ambiguity": {
+      "type": "object",
+      "required": [
+        "reason"
+      ],
+      "properties": {
+        "reason": {
+          "type": "string"
+        },
+        "element_key": {
+          "type": "string"
+        },
+        "region_key": {
+          "type": "string"
+        },
+        "needs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

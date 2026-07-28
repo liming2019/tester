@@ -1,4 +1,0 @@
-interface:
-  display_name: "API 迁移报告生成"
-  short_description: "统一生成 API 迁移核验 HTML 报告；单接口直接出明细，多接口出主报告和分接口明细，支持 direct/staged 链路"
-  default_prompt: "使用 $generate-api-migration-report 基于已有 API 迁移核验结构化结果生成中文 HTML 报告；按 chain_type 区分 direct 或 staged 明细，主报告样式统一。"

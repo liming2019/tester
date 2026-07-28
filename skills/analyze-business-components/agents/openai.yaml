@@ -1,0 +1,4 @@
+interface:
+  display_name: "识别业务组件"
+  short_description: "把页面运行态材料整理为筛选区、工具栏、表格和弹窗等业务结构"
+  default_prompt: "使用 $analyze-business-components 根据页面材料识别业务组件并输出结构化页面模型。"

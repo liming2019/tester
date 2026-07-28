@@ -33,9 +33,7 @@ description: 维护资深测试工程师 Agent 插件内置 Skills。用于以 s
 3. 若全局副本比插件内副本更新，必须先把有效差异合入插件，再归档全局副本。
 4. 若差异只是编码修正、缓存文件、IDE 文件、运行产物或本地配置，不得用全局副本覆盖插件内版本。
 5. 系统 Skill 仍保留在全局或系统目录，不迁入本插件。
-6. `.codex/plugins/cache`、`.codex/plugins/cache-backup` 只作为安装或运行缓存，不得作为 Skill 规则变更的唯一落点；任何有效修改必须先落到真实插件源目录。
-7. 修改任一插件内 Skill、Skill 模板、Skill 脚本、agent 配置或插件 manifest 后，必须执行插件校验、更新 cachebuster、重新安装插件，并用 `codex plugin list` 确认 `senior-test-engineer-agent@personal` 为 `installed, enabled`。
-8. 如为了即时验证而检查或同步缓存，必须明确说明缓存是重新安装后的派生结果；最终回复和提交范围只指向源目录中的有效变更，不把缓存目录当作维护成果。
+6. `.codex/plugins/cache`、`.codex/plugins/cache-backup` 只作为安装或运行缓存，不得作为 Skill 规则变更的唯一落点；如需验证缓存效果，必须先改真实源目录或分支，再同步缓存或重新安装。
 
 ## 插件内置测试专项 Skill
 
@@ -45,22 +43,24 @@ description: 维护资深测试工程师 Agent 插件内置 Skills。用于以 s
 2. `lanhu-to-testcase`
 3. `lanhu-requirements-extractor`
 4. `extract-functional-test-points`
-5. `ui-locator-orchestrator`
-6. `capture-web-runtime`
-7. `analyze-business-components`
-8. `generate-locator-candidates`
-9. `validate-locator-stability`
-10. `generate-automation-assets`
-11. `capture-web-elements`
-12. `auto-generate-test-data-by-table-schema`
-13. `quick-build-test-data`
-14. `verify-db-sync-result`
-15. `generate-api-migration-report`
-16. `generate-staged-api-migration-report`
-17. `generate-direct-api-migration-report`
-18. `verify-api-migration-result`
-19. `verify-json-order-ingestion`
-20. `sql-html-organizer`
+5. `generate-ui-automation-testcases`
+6. `generate-playwright-from-ui-testcases`
+7. `ui-locator-orchestrator`
+8. `capture-web-runtime`
+9. `analyze-business-components`
+10. `generate-locator-candidates`
+11. `validate-locator-stability`
+12. `generate-automation-assets`
+13. `capture-web-elements`
+14. `api-test-design`
+15. `linker-gateway-api-test`
+16. `auto-generate-test-data-by-table-schema`
+17. `quick-build-test-data`
+18. `verify-db-sync-result`
+19. `generate-staged-api-migration-report`
+20. `verify-api-migration-result`
+21. `verify-json-order-ingestion`
+22. `sql-html-organizer`
 
 ## 禁止迁移的系统 Skill
 
@@ -145,3 +145,4 @@ description: 维护资深测试工程师 Agent 插件内置 Skills。用于以 s
 3. 只提交插件源目录中的 `.codex-plugin`、`skills`、`agents`、必要模板和脚本。
 4. 功能分支只提交实际规则/模板/Skill 变化。
 5. 合并发布分支前再统一更新 cachebuster。
+6. 若本次曾修改缓存目录，必须确认同样的有效变更已落到真实源目录或分支，且提交范围只指向源仓内容。

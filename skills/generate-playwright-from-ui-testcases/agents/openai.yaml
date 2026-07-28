@@ -1,0 +1,4 @@
+interface:
+  display_name: "生成Playwright脚本"
+  short_description: "把 UI 自动化测试用例转换为 Playwright Python 脚本资产"
+  default_prompt: "使用 $generate-playwright-from-ui-testcases 把标准 UI 自动化测试用例和已验证定位资产转换为 Playwright Python 脚本。"

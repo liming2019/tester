@@ -1,0 +1,4 @@
+interface:
+  display_name: "生成UI自动化用例"
+  short_description: "把测试点转换为标准 UI 自动化测试用例 Markdown"
+  default_prompt: "使用 $generate-ui-automation-testcases 把测试点 Markdown 或 XMind 降级文件转换为标准 UI 自动化测试用例文件。"

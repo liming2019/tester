@@ -1,0 +1,4 @@
+interface:
+  display_name: "生成自动化资产"
+  short_description: "把已验证定位沉淀为 locator YAML、Page Object 和测试脚手架"
+  default_prompt: "使用 $generate-automation-assets 把已通过校验的定位结果生成 locator YAML、Page Object 和自动化脚手架。"

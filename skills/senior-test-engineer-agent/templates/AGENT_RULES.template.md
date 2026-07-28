@@ -129,6 +129,8 @@
 - 蓝湖链接、蓝湖版本、蓝湖需求提取、蓝湖测试点或测试用例：调用 `lanhu-to-testcase`。
 - 仅提取蓝湖结构化需求：调用 `lanhu-requirements-extractor`。
 - 已有结构化需求或截图/需求材料生成测试点：调用 `extract-functional-test-points`。
+- 已有测试点 Markdown、XMind 降级 Markdown、页面功能树或版本测试点清单，需要整理为标准 UI 自动化测试用例 Markdown 时：调用 `generate-ui-automation-testcases`。
+- 已有标准 UI 自动化测试用例 Markdown 和已验证定位资产，需要生成 Playwright Python 代码资产时：调用 `generate-playwright-from-ui-testcases`；默认只生成 Page Object、state setup、smoke/readonly/write/role 脚本，不默认执行。
 - 需要编排一整条 UI 自动化定位链路，把任务拆成运行态采集、组件识别、候选定位、稳定性校验和资产沉淀时：调用 `ui-locator-orchestrator`。
 - 用户提供页面 URL、登录态或交互步骤，需要采集真实运行态 DOM、截图、a11y 或状态快照时：调用 `capture-web-runtime`。
 - 已有运行态材料，需要识别筛选区、工具栏、表格、分页、弹窗、树或页签等业务组件时：调用 `analyze-business-components`。

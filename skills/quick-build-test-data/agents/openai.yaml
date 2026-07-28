@@ -1,4 +1,4 @@
-﻿interface:
+interface:
   display_name: "快速构建测试数据"
   short_description: "按业务规则生成可直接执行的测试数据 INSERT SQL。"
   default_prompt: "Use $quick-build-test-data to generate executable INSERT SQL for test data based on business rules and reference-table constraints."

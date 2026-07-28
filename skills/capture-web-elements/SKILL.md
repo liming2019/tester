@@ -5,18 +5,22 @@ description: "通过用户提供的网页 URL 和 token 打开页面，等待渲
 
 # 抓取网页元素
 
-使用 Python + Playwright 打开用户提供的页面，注入 token，等待页面稳定后抓取 DOM 元素和定位路径。默认只抓取业务元素：输入框、下拉、按钮、表格操作、表格列、弹窗控件等具备业务语义的可见控件。
+使用 Python + Playwright 打开用户提供的页面，注入 token，等待页面稳定后抓取 DOM 元素和定位路径。默认抓取当前范围内具备业务语义的可见控件，包括输入框、下拉、按钮、表格操作、表格列、弹窗触发器、抽屉触发器、下拉/级联触发器，以及自定义文本/图标触发器等业务动态操作元素。
 
 ## 工作流
 
 1. 确认认证注入方式。优先 `header`；其次 `cookie`、`local-storage`、`session-storage`；只有页面本身要求时才用 `query`。
 2. 确认页面稳定条件。已知稳定锚点时传 `--wait-selector`；否则使用 `--wait-until load` 并设置 `--settle-ms`。
-3. 默认使用 `--capture-mode business`。只有用户明确要求更宽泛的交互元素时才改为 `interactive`，要求全量可见 DOM 时才改为 `all`。
-4. 不要在聊天中回显 token。优先使用环境变量 `CAPTURE_TOKEN`，再通过 `--token-env` 传入脚本。
-5. 需要 YAML 时优先使用 `--export-locator-yaml`。`--export-uiproject-yaml` 只是兼容别名，也会输出 v2 分层 YAML。
-6. 只输出页面实际存在的区域。不要因为模板约定就强行输出 `team_panel`、`modals` 等空区域。
-7. 非列表/非表格列元素的定位策略必须保证唯一匹配。不要把 `.el-input__inner`、`.el-select__input`、`.el-range-input`、动态 `el-id-*`、绝对 XPath 当作主定位。
-8. Playwright 场景下，优先使用语义定位。推荐顺序：`test_id` > `role` > `label` > `placeholder` > 唯一文本锚点 > 唯一相对 XPath/CSS。表格行、表格列、行内操作是允许多元素集合定位的例外。
+3. 确认抓取范围。若未指定模块，默认抓取整页业务范围；若已指定模块，优先通过 `--scope-selector` 或业务区域限定只更新该模块。
+4. 默认使用 `--capture-mode business`。只有用户明确要求更宽泛的交互元素时才改为 `interactive`，要求全量可见 DOM 时才改为 `all`。
+5. 不要在聊天中回显 token。优先使用环境变量 `CAPTURE_TOKEN`，再通过 `--token-env` 传入脚本。
+6. 需要 YAML 时优先使用 `--export-locator-yaml`。`--export-uiproject-yaml` 只是兼容别名，也会输出 v2 分层 YAML。
+7. 只输出页面实际存在的区域。不要因为模板约定就强行输出 `team_panel`、`modals` 等空区域。
+8. 非列表/非表格列元素的定位策略必须保证唯一匹配。不要把 `.el-input__inner`、`.el-select__input`、`.el-range-input`、动态 `el-id-*`、绝对 XPath 当作主定位。
+9. Playwright 场景下，优先使用语义定位。推荐顺序：`test_id` > `role` > `label` > `placeholder` > 唯一文本锚点 > 唯一相对 XPath/CSS。表格行、表格列、行内操作是允许多元素集合定位的例外。
+10. 未指定模块时，除默认静态控件外，还应尽量覆盖可触发业务动态区域的入口元素，例如“新增”“编辑”“设置角色”“更多”“展开”“下拉箭头”等。
+11. 对自定义触发器不要只依赖原生标签。若元素具备清晰业务文本、图标+文本组合、业务容器常见类名、`cursor:pointer` 或明显的点击语义，也应纳入候选。
+12. 对重复文本或重复 placeholder，不要在抓取阶段去重成单个元素；应完整保留，并把后续按区域拆分的责任交给 `analyze-business-components`。
 
 ## 执行
 

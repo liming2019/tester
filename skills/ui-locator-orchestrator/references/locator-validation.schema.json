@@ -1,0 +1,169 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "UI Locator Validation Result",
+  "description": "Shared locator-validation contract for UI locator skills.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "page_key",
+    "results"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "page_key": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$"
+    },
+    "summary": {
+      "type": "object",
+      "properties": {
+        "pass": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "warn": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fail": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "blocked": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "results": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-z0-9_]+$": {
+          "$ref": "#/$defs/validationEntry"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "validationEntry": {
+      "type": "object",
+      "required": [
+        "result",
+        "states_checked",
+        "candidates_checked"
+      ],
+      "properties": {
+        "result": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL",
+            "BLOCKED"
+          ]
+        },
+        "chosen": {
+          "$ref": "#/$defs/strategy"
+        },
+        "states_checked": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "candidates_checked": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/check"
+          }
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidence"
+          }
+        },
+        "blocking_reason": {
+          "type": "string"
+        }
+      }
+    },
+    "strategy": {
+      "type": "object",
+      "required": [
+        "type",
+        "path"
+      ],
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        }
+      }
+    },
+    "check": {
+      "type": "object",
+      "required": [
+        "type",
+        "path",
+        "result"
+      ],
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "result": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "WARN",
+            "FAIL",
+            "BLOCKED"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "required": [
+        "kind",
+        "path"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "screenshot",
+            "trace",
+            "html",
+            "log",
+            "json"
+          ]
+        },
+        "path": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
