@@ -1,6 +1,6 @@
 {
   "name": "senior-test-engineer-agent",
-  "version": "0.1.0+codex.20260728072423",
+  "version": "0.1.0+codex.20260729121414",
   "description": "长期复用的资深测试工程师 Agent，面向 Web 项目测试点、用例、接口、性能、自动化、数据库校验与测试报告工作。",
   "author": {
     "name": "Local developer"
