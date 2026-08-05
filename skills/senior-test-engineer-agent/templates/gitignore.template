@@ -1,16 +1,46 @@
 # Test Agent local sensitive config
+config/*agent.config.local.json
 config/test-agent.config.local.json
+config/prod-agent.config.local.json
+config/test.json
 .env
 .env.*
 
 # Test Agent scratch/runtime files
+.venv/
+.idea/
+**/__pycache__/
+*.pyc
 work/
+work/sensitive/
 automation/.pytest_cache/
 automation/**/.pytest_cache/
 automation/**/__pycache__/
 automation/**/test-results/
 automation/**/playwright-report/
 outputs/screenshots/
+
+# Test reports: keep lightweight entry points and confirmed finals
+reports/**
+!reports/README.md
+!reports/current.md
+!reports/final/
+!reports/final/**
+reports/final/**/evidence/*.json
+!reports/final/**/evidence/*summary*.json
+!reports/final/**/evidence/evidence-index.json
+!reports/final/**/evidence/evidence-index.md
+
+# User-facing generated deliverables: keep index and confirmed finals
+outputs/**
+!outputs/README.md
+!outputs/index.md
+!outputs/final/
+!outputs/final/**
+
+# SQL history: keep reusable SQL in tracked folders, archive old batches locally
+sql/archive/**
+!sql/archive/README.md
 
 # Logs that may contain tokens/cookies
 *.log

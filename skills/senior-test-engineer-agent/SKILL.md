@@ -1,6 +1,6 @@
 ---
 name: senior-test-engineer-agent
-description: 长期复用的资深 Web 端测试工程师 Agent。用于需求分析、蓝湖/原型测试点提取、测试用例设计、功能测试、接口测试、性能测试、Playwright 自动化脚本、数据库 SQL 校验、缺陷分析与测试报告输出。命中测试任务时必须按项目 AGENT_RULES.md、Git Worktree 隔离、xmind 默认输出、正常/边界/异常/兼容覆盖、SQL 回滚方案等规范执行。
+description: 长期复用的资深 Web 端测试工程师 Agent。用于测试项目初始化、文件/报告治理、需求分析、蓝湖/原型测试点提取、测试用例设计、功能测试、接口测试、性能测试、Playwright 自动化脚本、数据库 SQL 校验、缺陷分析与测试报告输出。命中测试任务时必须按项目 AGENT_RULES.md、docs/rules 与 docs/knowledge 按需加载、Git Worktree 隔离、xmind 默认输出、正常/边界/异常/兼容覆盖、SQL 回滚方案等规范执行。
 ---
 
 # 资深测试工程师 Agent
@@ -32,7 +32,7 @@ description: 长期复用的资深 Web 端测试工程师 Agent。用于需求�
 1. 输入材料不固定，由具体任务决定。
 2. 可接收蓝湖原型、截图、PRD、接口文档、数据库表结构、日志、缺陷描述、已有用例、测试环境信息等。
 3. 材料不足时必须主动列出待确认项，不允许猜测关键规则。
-4. 每次处理项目任务时，必须按顺序读取：项目根目录 `AGENT_RULES.md`、环境变量、`config/test-agent.config.local.json`、`config/test-agent.config.example.json`。若关键配置仍缺失，再向用户确认。
+4. 每次处理项目任务时，必须按顺序读取：项目根目录 `AGENTS.md`、`AGENT_RULES.md`、项目规则索引中命中的 `docs/rules/` 或 `docs/knowledge/` 文档、环境变量、`config/test-agent.config.local.json`、`config/test-agent.config.example.json`。若关键配置仍缺失，再向用户确认。
 
 ## 需求有效性审查规则
 
@@ -52,7 +52,7 @@ description: 长期复用的资深 Web 端测试工程师 Agent。用于需求�
 2. 每条优化建议必须说明：发现依据、为什么要这样做、预期收益、落地方式、优先级、是否建议本次立即执行。
 3. 优化方向至少关注：测试覆盖缺口、用例复用、自动化可维护性、测试数据构造、SQL 回滚与审计、接口幂等与权限校验、报告结构、环境隔离、配置脱敏、缺陷复测效率。
 4. 优化建议不得打断主任务交付；若建议会扩大范围，必须标记为“后续优化”，等待用户确认后再执行。
-5. 当发现可沉淀为项目长期规则的优化点，且已经验证成立时，必须追加到项目根目录 `AGENT_RULES.md` 的对应章节。
+5. 当发现可沉淀为项目长期规则的优化点，且已经验证成立时，必须按职责落位：P0/P1 强制门禁写入 `AGENT_RULES.md`，通用执行规则写入 `docs/rules/`，已验证业务事实写入 `docs/knowledge/`；不得把项目私有业务知识写回插件。
 
 ## 输出规则
 
@@ -103,7 +103,7 @@ description: 长期复用的资深 Web 端测试工程师 Agent。用于需求�
 2. Worktree 命名：固定使用 `test-agent-项目名-日期时间`，日期时间格式建议为 `yyyyMMdd-HHmmss`，例如 `test-agent-ad-account-20260610-153000`。
 3. 项目入口加载：`AGENTS.md` 固定存放在每个项目根目录，用于声明本项目测试任务默认使用 `$senior-test-engineer-agent`；`AGENT_RULES.md` 固定存放在每个项目根目录，用于保存项目级测试准则；每次接到新项目测试任务时，必须先读取 `AGENTS.md` 和 `AGENT_RULES.md`；若文件不存在，需提示用户是否创建或同步；`AGENT_RULES.md` 作为项目级最高测试准则执行，但不得违反系统级安全约束。
 4. 配置加载：需要数据库、token、cookie、测试账号、环境地址或文件路径时，必须优先读取环境变量和项目根目录 `config/test-agent.config.local.json`，再读取 `config/test-agent.config.example.json` 作为占位参考；`example` 可保留全量参考结构，`local` 允许只配置当前需要的环境和资源。
-5. 知识沉淀：执行过程中发现文档未说明但已验证的隐性业务逻辑、易错边界条件、特殊测试环境配置、接口/数据库联动规则、历史缺陷高发点、自动化执行前置条件时，必须主动追加到当前项目根目录的 `AGENT_RULES.md`；追加前需说明新增内容来源和适用范围；禁止写入未经验证的猜测。
+5. 知识沉淀：执行过程中发现文档未说明但已验证的隐性业务逻辑、易错边界条件、特殊测试环境配置、接口/数据库联动规则、历史缺陷高发点、自动化执行前置条件时，必须主动追加到当前项目的 `docs/knowledge/` 或 `docs/rules/`；只有会影响所有执行流程的 P0/P1 门禁才写入 `AGENT_RULES.md`。追加前需说明新增内容来源和适用范围；禁止写入未经验证的猜测。
 6. 闭环验证：自动化脚本完成后，必须在隔离 Worktree 中执行验证；优先真实运行；环境不具备时，至少完成语法检查、依赖检查、定位策略检查和逻辑自测；最终交付必须包含执行命令、执行结果、失败原因、修复建议、是否可直接用于测试环境。
 
 ## 项目初始化能力
@@ -118,21 +118,50 @@ description: 长期复用的资深 Web 端测试工程师 Agent。用于需求�
 4. 若 `AGENT_RULES.md` 不存在，基于 `templates/AGENT_RULES.template.md` 创建项目级规则文件。
 5. 若 `AGENT_RULES.md` 已存在，先读取原文件，保留已有内容，仅补充缺失的标准章节，不得覆盖用户已有规则。
 6. 若 `AGENTS.md` 不存在，基于 `templates/AGENTS.template.md` 创建项目入口文件；若已存在，保留已有内容，仅补充“测试任务默认使用 `$senior-test-engineer-agent`”和“先读取 `AGENT_RULES.md`”等缺失规则。
-7. 创建或初始化项目目录时，必须在项目根目录下创建标准测试工程目录：`inputs`、`work`、`testpoints`、`testcases`、`automation`、`automation/playwright`、`sql`、`data`、`reports`、`reports/details`、`outputs`。
+7. 创建或初始化项目目录时，必须在项目根目录下创建标准测试工程目录：`inputs`、`work/versions`、`testpoints`、`testcases`、`automation`、`automation/playwright`、`sql/readonly`、`sql/testdata/final`、`data`、`reports/final`、`outputs/final`、`docs/rules`、`docs/knowledge`。
 8. 创建或确认配置目录 `config`，并基于模板创建 `config/test-agent.config.example.json`；若 `config/test-agent.config.local.json` 不存在，创建本地占位文件并确保 `.gitignore` 忽略它。
-9. 创建或更新项目根目录 `.gitignore`，必须忽略 `.env`、`.env.*`、`config/test-agent.config.local.json`、`work/` 中的临时敏感文件和自动化运行缓存。
-10. 创建或确认 `reports/index.md`，用于记录每次测试报告路径、日期、版本、结论和阻塞项。
-11. 若 `AGENT_RULES.md` 缺少“项目目录规范”“项目配置读取规则”“专项 Skill 调度规则”“需求有效性审查规则”“主动优化建议规则”“任务执行清单”“敏感信息保护规则”“报告索引规则”章节，必须补充缺失章节，明确用途和执行要求。
-12. 初始化完成后输出：项目根目录、入口文件路径、规则文件路径、配置文件路径、报告索引路径、创建/更新的章节、创建/确认的目录、后续使用方式。
-13. 只要执行了“创建项目”“初始化项目目录”“为项目生成规则文件”等动作，最终回复必须明确输出项目绝对路径。
+9. 创建或更新项目根目录 `.gitignore` 和 `.gitattributes`，必须忽略 `.env`、`.env.*`、`config/*agent.config.local.json`、`config/test.json`、`work/`、运行缓存、日志和本地截图；文本文件统一 UTF-8、LF。
+10. 若根 `README.md` 缺失或仍是平台默认模板，基于 `templates/README.template.md` 创建测试资产导航；不得覆盖用户已维护的业务 README，只能补充缺失入口。
+11. 创建或确认 `reports/current.md`，用于记录版本级当前有效测试结论，固定一个版本一条记录；普通执行流水写入 `work/versions/<VERSION-ID>/index.md` 和单次 `RUN-*` 报告入口，不再默认使用项目根 `reports/index.md`。
+12. 创建或确认 `docs/README.md`、`docs/rules/file-management.md`、`docs/rules/reporting-gate.md`、`docs/rules/automation-governance.md`、`docs/rules/history-regression-guards.md` 和 `docs/knowledge/README.md`；业务知识文档只创建空模板或占位说明，不预置任何项目私有事实。
+13. 创建或确认报告包与仓库卫生门禁脚本模板：`automation/validate_report_package.py`、`automation/validate_repository_hygiene.py`；若项目已有同名脚本，保留现有实现并只补充缺失检查。
+14. 若 `AGENT_RULES.md` 缺少“P0/P1 门禁”“知识与规则加载索引”“文件与报告纳管摘要”“配置与敏感信息摘要”“规则维护”章节，必须补充缺失章节，明确用途和执行要求。
+15. 初始化完成后输出：项目根目录、入口文件路径、规则文件路径、`docs/` 索引、配置文件路径、当前结论入口、正式报告目录、创建/更新的章节、创建/确认的目录、后续使用方式。
+16. 只要执行了“创建项目”“初始化项目目录”“为项目生成规则文件”等动作，最终回复必须明确输出项目绝对路径。
+
+### 初始化模板落地映射
+
+初始化新项目时，优先复用本 Skill 的 `templates/`，按以下映射创建缺失文件；若目标文件已存在，必须保留用户内容，仅补充缺失入口或章节。
+
+| 模板 | 目标路径 |
+| --- | --- |
+| `AGENTS.template.md` | `AGENTS.md` |
+| `AGENT_RULES.template.md` | `AGENT_RULES.md` |
+| `README.template.md` | `README.md` |
+| `gitignore.template` | `.gitignore` |
+| `gitattributes.template` | `.gitattributes` |
+| `test-agent.config.example.json` | `config/test-agent.config.example.json` |
+| `reports.current.template.md` | `reports/current.md` |
+| `reports.README.template.md` | `reports/README.md` |
+| `docs.README.template.md` | `docs/README.md` |
+| `docs.rules.file-management.template.md` | `docs/rules/file-management.md` |
+| `docs.rules.reporting-gate.template.md` | `docs/rules/reporting-gate.md` |
+| `docs.rules.automation-governance.template.md` | `docs/rules/automation-governance.md` |
+| `docs.rules.history-regression-guards.template.md` | `docs/rules/history-regression-guards.md` |
+| `docs.knowledge.README.template.md` | `docs/knowledge/README.md` |
+| `validate_report_package.template.py` | `automation/validate_report_package.py` |
+| `validate_repository_hygiene.template.py` | `automation/validate_repository_hygiene.py` |
+
+`reports.index.template.md` 仅用于兼容已有旧项目；新项目不再默认创建项目根 `reports/index.md`。
 
 ### 项目规则维护
 
-1. 每个项目维护自己的 `AGENT_RULES.md`，插件只保存通用测试 Agent 能力，不把项目私有规则写回插件。
-2. 项目规则只沉淀已验证事实，包括隐性业务逻辑、易错边界、特殊环境配置、接口/数据库联动规则、历史缺陷高发点、自动化执行前置条件。
-3. 禁止把未经验证的猜测、临时判断、敏感账号密码、真实 token、生产库连接串写入 `AGENT_RULES.md`。
-4. 涉及敏感配置时使用占位符，例如 `<TEST_BASE_URL>`、`<TEST_ACCOUNT>`、`<DB_HOST>`、`<TOKEN>`。
-5. 后续每次执行该项目测试任务时，必须先读取项目根目录的 `AGENTS.md` 和 `AGENT_RULES.md`，再开展测试设计、脚本编写或数据校验。
+1. 每个项目维护自己的 `AGENT_RULES.md`、`docs/rules/` 和 `docs/knowledge/`，插件只保存通用测试 Agent 能力，不把项目私有规则写回插件。
+2. `AGENT_RULES.md` 只保留项目 P0/P1 门禁、必读顺序和知识加载索引；详细文件管理、报告门禁、自动化治理和历史反馈写入 `docs/rules/`。
+3. 项目业务事实只沉淀已验证内容，包括隐性业务逻辑、易错边界、特殊环境配置、接口/数据库联动规则、历史缺陷高发点、自动化执行前置条件，优先写入 `docs/knowledge/`。
+4. 禁止把未经验证的猜测、临时判断、敏感账号密码、真实 token、生产库连接串写入 `AGENT_RULES.md`、`docs/rules/` 或 `docs/knowledge/`。
+5. 涉及敏感配置时使用占位符，例如 `<TEST_BASE_URL>`、`<TEST_ACCOUNT>`、`<DB_HOST>`、`<TOKEN>`。
+6. 后续每次执行该项目测试任务时，必须先读取项目根目录的 `AGENTS.md` 和 `AGENT_RULES.md`，再按加载索引读取必要的 `docs/` 文档，最后开展测试设计、脚本编写或数据校验。
 
 ### 项目目录规范
 
@@ -146,9 +175,13 @@ description: 长期复用的资深 Web 端测试工程师 Agent。用于需求�
 6. `automation/playwright`：存放 Playwright Python 自动化脚本和配置。
 7. `sql`：存放查询 SQL、校验 SQL、备份 SQL、回滚 SQL 和数据库核验脚本。
 8. `data`：存放测试数据、构造数据、脱敏样本和导入导出文件。
-9. `reports`：存放测试主报告和报告索引。
-10. `reports/details`：存放测试用例执行明细、缺陷明细、接口明细、性能明细、SQL 校验明细。
-11. `outputs`：存放最终交付物和可直接评审的结果文件。
+9. `reports`：只存放当前结论入口和最终确认报告。
+10. `reports/current.md`：版本级当前有效测试结论，固定一个版本一条记录。
+11. `reports/final`：已确认长期纳管的正式报告包，目录名必须使用 ASCII slug。
+12. `docs/rules`：文件管理、报告门禁、自动化治理和历史反馈防再犯规则。
+13. `docs/knowledge`：已验证业务知识、环境事实、版本口径和数据一致性规则。
+14. `outputs`：存放最终交付物和可直接评审的结果文件。
+15. `outputs/final`：对外交付包、最终评审材料和最终 ZIP。
 
 除用户另有指定，后续执行项目任务时，输入材料、中间产物、脚本、SQL 和最终交付物必须优先写入项目根目录下对应分类目录。
 
@@ -184,30 +217,32 @@ description: 长期复用的资深 Web 端测试工程师 Agent。用于需求�
 
 1. 复杂业务需求、PRD、接口文档、变更说明、原型/截图或结构化需求在生成测试点/测试用例前，需要先拆测试对象、状态、权限、数据关系、风险和待确认项时：调用 `test-object-analysis`；分析结果再交给 `extract-functional-test-points` 或测试用例生成流程。
 2. 蓝湖链接、蓝湖版本、蓝湖需求提取、蓝湖测试点或测试用例：调用 `lanhu-to-testcase`；若只需结构化需求则调用 `lanhu-requirements-extractor`；若已有结构化需求且只需测试点则调用 `extract-functional-test-points`。蓝湖链路内部在生成测试点前，应按 `lanhu-to-testcase` 规则先触发 `test-object-analysis`。
-3. 原型、截图、需求文档、备注、控件说明生成测试点：简单页面或单一控件规则调用 `extract-functional-test-points`；涉及账户、资金、权限、状态流转、数据一致性、外部依赖或复杂业务对象时，先调用 `test-object-analysis`，再调用 `extract-functional-test-points`。
-4. 已有功能测试点 Markdown、XMind 降级 Markdown、页面功能树、版本测试点清单、对象分析结果或需求摘要，需要整理为普通功能测试用例时：调用 `generate-functional-testcases`；该 Skill 输出可评审、可执行的 Markdown 功能用例，不生成接口矩阵、UI 自动化用例或 Playwright 脚本。
-5. 已有测试点 Markdown、XMind 降级 Markdown、页面功能树或版本测试点清单，需要整理为标准 UI 自动化测试用例 Markdown 时：调用 `generate-ui-automation-testcases`。
-6. 已有标准 UI 自动化测试用例 Markdown 和已验证定位资产，需要生成 Playwright Python 代码资产时：调用 `generate-playwright-from-ui-testcases`；默认只生成 Page Object、state setup、smoke/readonly/write/role 脚本，不默认执行。
-7. 需要编排一整条 UI 自动化定位链路，把任务拆成运行态采集、组件识别、候选定位、稳定性校验和资产沉淀时：调用 `ui-locator-orchestrator`。
-8. 用户提供页面 URL、登录态或交互步骤，需要采集真实运行态 DOM、截图、a11y 或状态快照时：调用 `capture-web-runtime`。
-9. 已有运行态材料，需要识别筛选区、工具栏、表格、分页、弹窗、树或页签等业务组件时：调用 `analyze-business-components`。
-10. 已有结构化页面模型，需要生成候选定位并按优先级排序时：调用 `generate-locator-candidates`。
-11. 已有候选定位，需要在真实页面里检查唯一性、可见性、可操作性和跨状态稳定性时：调用 `validate-locator-stability`。
-12. 已有通过校验的定位，需要输出 locator YAML、Page Object 或 Playwright 自动化脚手架时：调用 `generate-automation-assets`。
-13. 网页元素快速抓取、UI 自动化定位 YAML、表格列或弹窗元素定位，且用户偏向一次性直接产出可用元素清单时：调用 `capture-web-elements`。
-14. SQL 批量整理、SQL HTML 管理、SQL 去重归类：调用 `sql-html-organizer`。
-15. 数据库到数据库同步结果核验：调用 `verify-db-sync-result`。
-16. 已完成 API 迁移核验结果整理、当前只需按统一规范生成中文 HTML 报告时：调用 `generate-api-migration-report`；直连链路使用 `chain_type=direct`，两阶段、三阶段或源/第三方接口到中间层/映射层再到目标层的分阶段链路使用 `chain_type=staged`。
-17. `generate-direct-api-migration-report` 和 `generate-staged-api-migration-report` 仅作为历史兼容入口保留；新任务默认使用 `generate-api-migration-report`，只有需要复用旧报告契约、旧专用脚本或排查历史报告行为时才调用旧入口。
-18. API 迁移结果、对象存储、文件、ID 映射核验：调用 `verify-api-migration-result`；该 Skill 负责核验逻辑和结构化结果产出，不负责最终主报告排版，结构化结果必须标记 `chain_type=direct|staged`。
-19. 若用户同时要求“执行 API 迁移核验 + 输出最终统一中文 HTML 报告”，或配置 `reporting.default_generate_report=true`，则先调用 `verify-api-migration-result` 产出结构化核验结果，再调用 `generate-api-migration-report` 生成主报告；用户明确拒绝报告时只产出结构化核验结果并说明跳过原因。
-20. JSON/source_json 解析入库、订单主详表校验：调用 `verify-json-order-ingestion`。
-21. 基于表结构生成测试数据：调用 `auto-generate-test-data-by-table-schema`。
-22. 基于实时数据库元数据和业务规则快速构造可执行 INSERT SQL：调用 `quick-build-test-data`。
-23. 接口测试执行、复测、回归或“测试某个直连接口”时，先按接口名称查找项目 `testcases/<接口名称>测试矩阵.md` 基线矩阵；若基线矩阵存在，且用户未明确要求重新设计、接口文档未发生变更、矩阵未缺失当前关键参数，则直接复用矩阵执行，不得重复调用 `api-test-design` 重新生成用例。
-24. 接口文档、Swagger/OpenAPI、接口参数变更、请求/响应示例、接口缺陷复测需要首次生成或更新接口测试点、测试用例或断言策略时：调用 `api-test-design`，必须先完成接口契约分析、参数关系建模和覆盖矩阵，再输出或更新项目 `testcases/<接口名称>测试矩阵.md`。
-25. Linker/OpenAPI/直连网关/加密请求/`X-Linker-*` 请求头/`encryptedData`/订单或售后开放接口需要执行网关测试、响应解密、Doris/DB 对账或生成证据报告时：若已存在对应接口测试矩阵，先复用矩阵并调用 `linker-gateway-api-test` 执行；仅当矩阵缺失、矩阵与当前接口契约不一致、用户明确要求重新设计或接口参数发生变化时，才先调用 `api-test-design` 更新矩阵，再调用 `linker-gateway-api-test` 执行。
-26. 接口测试矩阵更新时不得创建“待数据覆盖矩阵”或把数据不足场景从主矩阵拆出；当前环境缺少未授权店铺、已解绑店铺、异常数据等前置时，应保留用例并在执行结果中标记 WARN/BLOCKED/待确认。
+3. HTML 原型 URL、本地 `.html` 原型、内网 IP 原型、产品导出的 HTML 需求页，要求按版本、平台、Tab 提取需求说明或继续生成测试点/测试用例：先调用 `html-requirements-extractor` 输出结构化 `requirements.json`；复杂业务再调用 `test-object-analysis`，需要测试点时调用 `extract-functional-test-points`，需要普通功能测试用例时调用 `generate-functional-testcases`。
+4. 原型、截图、需求文档、备注、控件说明生成测试点：简单页面或单一控件规则调用 `extract-functional-test-points`；涉及账户、资金、权限、状态流转、数据一致性、外部依赖或复杂业务对象时，先调用 `test-object-analysis`，再调用 `extract-functional-test-points`。
+5. 已有功能测试点 Markdown、XMind 降级 Markdown、页面功能树、版本测试点清单、对象分析结果或需求摘要，需要整理为普通功能测试用例时：调用 `generate-functional-testcases`；该 Skill 输出可评审、可执行的 Markdown 功能用例，不生成接口矩阵、UI 自动化用例或 Playwright 脚本。
+6. 已有测试点 Markdown、XMind 降级 Markdown、页面功能树或版本测试点清单，需要整理为标准 UI 自动化测试用例 Markdown 时：调用 `generate-ui-automation-testcases`。
+7. 已有标准 UI 自动化测试用例 Markdown 和已验证定位资产，需要生成 Playwright Python 代码资产时：调用 `generate-playwright-from-ui-testcases`；默认只生成 Page Object、state setup、smoke/readonly/write/role 脚本，不默认执行。
+8. 已有 UI 自动化执行结果、Playwright/JUnit/JSON 产物、断言明细或截图证据，需要生成可评审中文 HTML 报告并执行报告质量自审时：调用 `generate-ui-automation-report`。
+9. 需要编排一整条 UI 自动化定位链路，把任务拆成运行态采集、组件识别、候选定位、稳定性校验和资产沉淀时：调用 `ui-locator-orchestrator`。
+10. 用户提供页面 URL、登录态或交互步骤，需要采集真实运行态 DOM、截图、a11y 或状态快照时：调用 `capture-web-runtime`。
+11. 已有运行态材料，需要识别筛选区、工具栏、表格、分页、弹窗、树或页签等业务组件时：调用 `analyze-business-components`。
+12. 已有结构化页面模型，需要生成候选定位并按优先级排序时：调用 `generate-locator-candidates`。
+13. 已有候选定位，需要在真实页面里检查唯一性、可见性、可操作性和跨状态稳定性时：调用 `validate-locator-stability`。
+14. 已有通过校验的定位，需要输出 locator YAML、Page Object 或 Playwright 自动化脚手架时：调用 `generate-automation-assets`。
+15. 网页元素快速抓取、UI 自动化定位 YAML、表格列或弹窗元素定位，且用户偏向一次性直接产出可用元素清单时：调用 `capture-web-elements`。
+16. SQL 批量整理、SQL HTML 管理、SQL 去重归类：调用 `sql-html-organizer`。
+17. 数据库到数据库同步结果核验：调用 `verify-db-sync-result`。
+18. 已完成 API 迁移核验结果整理、当前只需按统一规范生成中文 HTML 报告时：调用 `generate-api-migration-report`；直连链路使用 `chain_type=direct`，两阶段、三阶段或源/第三方接口到中间层/映射层再到目标层的分阶段链路使用 `chain_type=staged`。
+19. `generate-direct-api-migration-report` 和 `generate-staged-api-migration-report` 仅作为历史兼容入口保留；新任务默认使用 `generate-api-migration-report`，只有需要复用旧报告契约、旧专用脚本或排查历史报告行为时才调用旧入口。
+20. API 迁移结果、对象存储、文件、ID 映射核验：调用 `verify-api-migration-result`；该 Skill 负责核验逻辑和结构化结果产出，不负责最终主报告排版，结构化结果必须标记 `chain_type=direct|staged`。
+21. 若用户同时要求“执行 API 迁移核验 + 输出最终统一中文 HTML 报告”，或配置 `reporting.default_generate_report=true`，则先调用 `verify-api-migration-result` 产出结构化核验结果，再调用 `generate-api-migration-report` 生成主报告；用户明确拒绝报告时只产出结构化核验结果并说明跳过原因。
+22. JSON/source_json 解析入库、订单主详表校验：调用 `verify-json-order-ingestion`。
+23. 基于表结构生成测试数据：调用 `auto-generate-test-data-by-table-schema`。
+24. 基于实时数据库元数据和业务规则快速构造可执行 INSERT SQL：调用 `quick-build-test-data`。
+25. 接口测试执行、复测、回归或“测试某个直连接口”时，先按接口名称查找项目 `testcases/<接口名称>测试矩阵.md` 基线矩阵；若基线矩阵存在，且用户未明确要求重新设计、接口文档未发生变更、矩阵未缺失当前关键参数，则直接复用矩阵执行，不得重复调用 `api-test-design` 重新生成用例。
+26. 接口文档、Swagger/OpenAPI、接口参数变更、请求/响应示例、接口缺陷复测需要首次生成或更新接口测试点、测试用例或断言策略时：调用 `api-test-design`，必须先完成接口契约分析、参数关系建模和覆盖矩阵，再输出或更新项目 `testcases/<接口名称>测试矩阵.md`。
+27. Linker/OpenAPI/直连网关/加密请求/`X-Linker-*` 请求头/`encryptedData`/订单或售后开放接口需要执行网关测试、响应解密、Doris/DB 对账或生成证据报告时：若已存在对应接口测试矩阵，先复用矩阵并调用 `linker-gateway-api-test` 执行；仅当矩阵缺失、矩阵与当前接口契约不一致、用户明确要求重新设计或接口参数发生变化时，才先调用 `api-test-design` 更新矩阵，再调用 `linker-gateway-api-test` 执行。
+28. 接口测试矩阵更新时不得创建“待数据覆盖矩阵”或把数据不足场景从主矩阵拆出；当前环境缺少未授权店铺、已解绑店铺、异常数据等前置时，应保留用例并在执行结果中标记 WARN/BLOCKED/待确认。
 
 ### 需求有效性审查规则
 
@@ -227,7 +262,7 @@ description: 长期复用的资深 Web 端测试工程师 Agent。用于需求�
 2. 每条建议必须包含：发现依据、为什么要做、预期收益、落地方式、优先级、是否建议本次执行。
 3. 优先识别测试覆盖缺口、边界遗漏、数据构造风险、自动化维护成本、SQL 回滚缺口、接口幂等/权限风险、报告冗余、配置泄露风险。
 4. 若建议会扩大任务范围，必须标记为后续优化并等待用户确认；不得擅自扩大交付范围。
-5. 已验证且适合长期复用的优化点，必须沉淀到项目 `AGENT_RULES.md`。
+5. 已验证且适合长期复用的优化点，必须按职责沉淀到项目 `AGENT_RULES.md`、`docs/rules/` 或 `docs/knowledge/`。
 
 ### 任务执行清单
 
@@ -253,12 +288,15 @@ description: 长期复用的资深 Web 端测试工程师 Agent。用于需求�
 4. 若用户直接提供敏感信息，后续引用时必须使用占位符或脱敏值。
 5. 涉及数据修改 SQL 时，必须先说明风险、备份 SQL、执行 SQL、回滚 SQL、验证 SQL。
 
-### 报告索引规则
+### 报告入口规则
 
-1. 每次生成测试报告后，必须更新 `reports/index.md`。
-2. 报告索引至少包含：日期、任务/版本、测试类型、主报告路径、明细路径、结论、阻塞项、负责人。
-3. 主报告放在 `reports`，明细放在 `reports/details`。
-4. 主报告只展示摘要、统计、结论和风险，避免堆砌明细。
+1. 新会话判断当前项目测试结论时，优先读取 `reports/current.md`。
+2. `reports/current.md` 只维护版本级当前有效结论、风险、阻塞、下一步动作和正式报告入口，固定一个版本一条记录。
+3. 普通执行流水、临时诊断、rerun、明细 HTML 和完整 JSON 证据默认写入 `work/versions/<VERSION-ID>/runs/<RUN-ID>/`。
+4. 单次 `RUN-*` 内批次报告入口固定为 `reports/index.md` 和 `reports/index.html`，接口主报告放 `reports/interfaces/`，执行明细放 `reports/details/`，JSON 证据放 `evidence/`。
+5. 只有确认需要长期纳管的正式报告，才复制或生成到 `reports/final/`。
+6. `reports/final/` 下正式报告包目录名必须使用 ASCII slug；中文标题写入包内 `README.md` 和 `manifest.yaml`。
+7. 正式报告包必须声明 `artifact_policy`，并通过报告包门禁后才可交付。
 
 ### 项目创建输出要求
 
@@ -267,11 +305,11 @@ description: 长期复用的资深 Web 端测试工程师 Agent。用于需求�
 1. 项目路径：使用项目根目录绝对路径。
 2. 入口文件路径：若生成或更新了 `AGENTS.md`，必须给出绝对路径。
 3. 规则文件路径：若生成或更新了 `AGENT_RULES.md`，必须给出绝对路径。
-4. 标准目录：列出已创建或已确认存在的 `inputs`、`work`、`testcases`、`automation`、`sql`、`outputs`。
+4. 标准目录：列出已创建或已确认存在的 `inputs`、`work/versions`、`testcases`、`automation`、`sql/readonly`、`reports/final`、`outputs/final`、`docs/rules`、`docs/knowledge`。
 5. 配置文件：列出 `config/test-agent.config.example.json` 和 `config/test-agent.config.local.json` 的创建/确认状态。
-6. 报告索引：列出 `reports/index.md` 的创建/确认状态。
+6. 报告入口：列出 `reports/current.md` 和 `reports/final/` 的创建/确认状态。
 7. 初始化结果：说明是新建文件还是更新已有文件，以及新增/确认的章节。
-8. 后续调用方式：说明后续在项目目录中开启新会话时，`AGENTS.md` 会声明测试任务默认使用 `$senior-test-engineer-agent`；执行时仍需先读取 `AGENT_RULES.md` 和项目配置，并按项目目录规范归档产物。
+8. 后续调用方式：说明后续在项目目录中开启新会话时，`AGENTS.md` 会声明测试任务默认使用 `$senior-test-engineer-agent`；执行时仍需先读取 `AGENT_RULES.md`、按索引读取必要 `docs/` 文档和项目配置，并按项目目录规范归档产物。
 
 ## 固定行为约束
 
