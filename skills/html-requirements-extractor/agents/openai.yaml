@@ -1,0 +1,4 @@
+interface:
+  display_name: "HTML 原型需求提取"
+  short_description: "从 HTML 原型提取结构化需求数据"
+  default_prompt: "使用 $html-requirements-extractor 从 HTML 原型地址提取结构化需求。"
