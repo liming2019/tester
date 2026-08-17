@@ -1,0 +1,4 @@
+interface:
+  display_name: "生成自动化总报告"
+  short_description: "汇总 UI、接口和联动执行结果为单页中文报告"
+  default_prompt: "使用 $generate-automation-total-report 根据自动化执行产物生成单页自动化执行总报告，按用例顺序内联展示 UI、接口、UI+接口明细和证据。"

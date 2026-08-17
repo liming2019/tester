@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -35,6 +36,10 @@ def stringify(value: Any) -> str:
     if isinstance(value, str):
         return value.strip()
     return str(value).strip()
+
+
+def safe_filename(text: str) -> str:
+    return re.sub(r'[\\/:*?"<>|]+', "_", text).strip() or "interface"
 
 
 def load_contract(path: Path | None) -> dict[str, Any]:
@@ -192,9 +197,14 @@ def resolve_mode(
 
 def validate_input(args: argparse.Namespace) -> int:
     contract = load_contract(args.contract)
-    data = load_json(Path(args.input))
+    input_path = Path(args.input)
+    raw_text = input_path.read_text(encoding="utf-8")
+    data = json.loads(raw_text)
     errors: list[str] = []
     warnings: list[str] = []
+
+    if "????" in raw_text:
+        errors.append("输入文件存在乱码占位符 '????'，请先修复 canonical JSON 编码后再生成报告。")
 
     overall_status = get_status(data)
     chain_type = infer_chain_type(data, contract, args.chain_type)
@@ -454,14 +464,28 @@ def validate_output(args: argparse.Namespace) -> int:
                 expected_count = max(len(interface_names), 1)
                 if len(html_files) < expected_count:
                     errors.append("分接口 HTML 数量少于识别到的接口数量。")
+                interface_name_by_file = {safe_filename(name): name for name in interface_names}
                 for file_path in html_files:
                     text = file_path.read_text(encoding="utf-8")
+                    if "????" in text:
+                        errors.append(f"分接口页 {file_path.name} 存在乱码占位符 '????'。")
                     validate_sections(
                         text,
                         interface_sections,
                         f"分接口页 {file_path.name}",
                         errors,
                     )
+                    current_interface = interface_name_by_file.get(file_path.stem)
+                    if current_interface:
+                        mixed_names = [
+                            name
+                            for name in interface_names
+                            if name != current_interface and name in text
+                        ]
+                        if mixed_names:
+                            errors.append(
+                                f"分接口页 {file_path.name} 混入其他接口内容: {', '.join(mixed_names)}"
+                            )
                     if not args.skip_layout_check:
                         layout_errors, layout_warnings = audit_html_layout(file_path, args.viewport_width)
                         errors.extend(layout_errors)

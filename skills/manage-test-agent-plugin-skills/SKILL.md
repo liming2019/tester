@@ -1,6 +1,6 @@
 ---
 name: manage-test-agent-plugin-skills
-description: 维护资深测试工程师 Agent 插件内置 Skills。用于以 senior-test-engineer-agent 插件内 Skill 为唯一源，检查并归档全局同名测试 Skill、对比插件内外差异、必要时先合入全局较新内容、排除系统 Skill、更新入口 Agent 调度规则、执行插件校验、更新 cachebuster、重新安装插件，并输出归档/迁移报告和 Git 提交前检查清单。
+description: 维护资深测试工程师 Agent 插件内置 Skills。用于以 senior-test-engineer-agent 插件内 Skill 为唯一源，检查并归档全局同名测试 Skill、对比插件内外差异、必要时先合入全局较新内容、排除系统 Skill、更新入口 Agent 调度规则、录入/补充/调整测试专项 Skill 规范、检查门禁或历史反馈防再犯规则、修复只改到 .codex/plugins/cache 未同步真实源文件的问题、执行插件校验、更新 cachebuster、重新安装插件，并输出归档/迁移报告和 Git 提交前检查清单。
 ---
 
 # Manage Test Agent Plugin Skills
@@ -17,6 +17,14 @@ description: 维护资深测试工程师 Agent 插件内置 Skills。用于以 s
 4. 处理插件内外同名 Skill 冲突。
 5. 准备把插件提交到 Git 或做分支合并。
 6. 更新插件版本、校验插件、重新安装插件。
+7. 用户要求把检查规范、执行门禁、历史反馈防再犯规则录入、补充或调整到测试专项 Skill。
+8. 发现或怀疑规则只写入 `.codex/plugins/cache`、安装缓存、运行缓存，而没有同步真实插件源文件。
+
+## 触发路由规则
+
+用户说“录入规范”“补充 Skill 规范”“调整检查规范”“把这条写到 Skill 里”“避免再次出现同类问题”且目标属于测试 Agent 插件或测试专项 Skill 时，必须先使用本 Skill 定位真实插件源目录，再修改目标 Skill。不得只按当前会话暴露的 `.codex/plugins/cache` 路径直接编辑。
+
+若同一任务同时命中具体业务 Skill，例如 `html-requirements-extractor`，执行顺序必须是：先用本 Skill 完成源目录定位和源/缓存边界确认，再读取并修改具体业务 Skill。
 
 ## 默认路径
 
@@ -42,28 +50,31 @@ description: 维护资深测试工程师 Agent 插件内置 Skills。用于以 s
 1. `test-object-analysis`
 2. `lanhu-to-testcase`
 3. `lanhu-requirements-extractor`
-4. `extract-functional-test-points`
-5. `generate-functional-testcases`
-6. `generate-ui-automation-testcases`
-7. `generate-playwright-from-ui-testcases`
-8. `ui-locator-orchestrator`
-9. `capture-web-runtime`
-10. `analyze-business-components`
-11. `generate-locator-candidates`
-12. `validate-locator-stability`
-13. `generate-automation-assets`
-14. `capture-web-elements`
-15. `api-test-design`
-16. `linker-gateway-api-test`
-17. `auto-generate-test-data-by-table-schema`
-18. `quick-build-test-data`
-19. `verify-db-sync-result`
-20. `generate-api-migration-report`
-21. `generate-staged-api-migration-report`
-22. `generate-direct-api-migration-report`
-23. `verify-api-migration-result`
-24. `verify-json-order-ingestion`
-25. `sql-html-organizer`
+4. `html-requirements-extractor`
+5. `extract-functional-test-points`
+6. `generate-functional-testcases`
+7. `generate-ui-automation-testcases`
+8. `generate-playwright-from-ui-testcases`
+9. `ui-locator-orchestrator`
+10. `capture-web-runtime`
+11. `analyze-business-components`
+12. `generate-locator-candidates`
+13. `validate-locator-stability`
+14. `generate-automation-assets`
+15. `capture-web-elements`
+16. `api-test-design`
+17. `linker-gateway-api-test`
+18. `auto-generate-test-data-by-table-schema`
+19. `quick-build-test-data`
+20. `verify-db-sync-result`
+21. `generate-api-migration-report`
+22. `generate-staged-api-migration-report`
+23. `generate-direct-api-migration-report`
+24. `verify-api-migration-result`
+25. `verify-json-order-ingestion`
+26. `sql-html-organizer`
+27. `generate-ui-automation-report`
+28. `generate-automation-total-report`
 
 ## 禁止迁移的系统 Skill
 

@@ -118,7 +118,7 @@ description: 长期复用的资深 Web 端测试工程师 Agent。用于测试�
 4. 若 `AGENT_RULES.md` 不存在，基于 `templates/AGENT_RULES.template.md` 创建项目级规则文件。
 5. 若 `AGENT_RULES.md` 已存在，先读取原文件，保留已有内容，仅补充缺失的标准章节，不得覆盖用户已有规则。
 6. 若 `AGENTS.md` 不存在，基于 `templates/AGENTS.template.md` 创建项目入口文件；若已存在，保留已有内容，仅补充“测试任务默认使用 `$senior-test-engineer-agent`”和“先读取 `AGENT_RULES.md`”等缺失规则。
-7. 创建或初始化项目目录时，必须在项目根目录下创建标准测试工程目录：`inputs`、`work/versions`、`testpoints`、`testcases`、`automation`、`automation/playwright`、`sql/readonly`、`sql/testdata/final`、`data`、`reports/final`、`outputs/final`、`docs/rules`、`docs/knowledge`。
+7. 创建或初始化项目目录时，必须在项目根目录下创建标准测试工程目录：`inputs`、`inputs/requirements`、`work/versions`、`testpoints`、`testcases`、`automation`、`automation/playwright`、`sql/readonly`、`sql/testdata/final`、`data`、`reports/final`、`outputs/final`、`docs/rules`、`docs/knowledge`。
 8. 创建或确认配置目录 `config`，并基于模板创建 `config/test-agent.config.example.json`；若 `config/test-agent.config.local.json` 不存在，创建本地占位文件并确保 `.gitignore` 忽略它。
 9. 创建或更新项目根目录 `.gitignore` 和 `.gitattributes`，必须忽略 `.env`、`.env.*`、`config/*agent.config.local.json`、`config/test.json`、`work/`、运行缓存、日志和本地截图；文本文件统一 UTF-8、LF。
 10. 若根 `README.md` 缺失或仍是平台默认模板，基于 `templates/README.template.md` 创建测试资产导航；不得覆盖用户已维护的业务 README，只能补充缺失入口。

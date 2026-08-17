@@ -43,11 +43,20 @@ description: 基于已完成的 API 驱动数据迁移核验结果，统一生�
 
 主报告只做摘要、统计、结论和导航；字段明细、差异样例、源/目标证据和中间层证据必须放到单接口明细或分接口明细页。
 主报告不渲染目录块，避免摘要页出现重复导航；单接口明细页和分接口明细页保留目录，并默认放在正文左侧作为章节导航，窄屏下可折回正文上方。
-单接口明细页和分接口明细页必须只展示当前接口的数据；`source_to_staging_summary`、`staging_to_target_summary`、`full_chain_consistency_summary`、`conclusion`、差异样例、覆盖缺口和字段规则都必须按当前接口过滤，不得混入其他接口或主报告全局结论。
+单接口明细页和分接口明细页必须只展示当前接口的数据；`source_baseline`、`target_sources`/`target_source`、`business_keys`、`blocked_items`、`likely_causes`、`source_to_staging_summary`、`staging_to_target_summary`、`full_chain_consistency_summary`、`conclusion`、差异样例、覆盖缺口和字段规则都必须按当前接口过滤，不得混入其他接口或主报告全局结论。
 分阶段明细页的“源到中间层核验结果”和“中间层到目标核验结果”是阶段摘要，不得再渲染为“接口名称 / 状态 / 详情”明细表；必须直接展示核验数据源、目标对象或目标表、核验总条数、阶段状态，不重复展示“核验结果”和“总结”行。
 分阶段明细页不单独渲染“总体判定依据”章节；全链路判断应沉淀到接口概况、阶段摘要、差异样例和接口结论中，避免页面重复堆叠。
 “目标数据库赋值规则及核验结果”中的“表字段”展示目标表技术字段名，“字段名”必须优先展示 `field_meaning`、目标字段中文含义或别名；不得在有中文字段含义时回退展示完整技术字段路径。该表必须使用稳定列宽：表字段/字段名列不抢占过多宽度，检查记录数/不匹配记录数/状态列必须留出清晰宽度，长规则列允许横向滚动兜底。
 报告表格行 hover 背景色必须与默认底色和隔行底色明显区分，优先使用温和高亮色，不使用相近浅蓝导致用户难以定位当前行。
+
+## 分接口隔离硬门禁
+
+`full` 模式生成多接口报告时，主报告只能做摘要和导航；每个分接口明细页必须与一个接口一一对应。交付前必须检查：
+
+- 当前接口明细页不得出现其他接口名称、接口路径、目标表名、源/目标证据、业务键、阻塞项、差异样例或接口结论。
+- “查看明细”链接必须进入当前接口自己的 HTML 文件，不得链接到合并详情页或其他接口详情页。
+- `source_baseline.requested_interfaces`、`target_sources`/`target_source`、`business_keys`、`blocked_items`、`likely_causes` 这类全局证据字段必须先按 `interface_name` 或接口身份字段过滤，再进入明细页。
+- 输出校验出现“分接口页混入其他接口内容”、连续问号乱码占位符、缺少分接口页或主报告缺少详情链接时，必须先修正并重新生成，禁止交付。
 
 ## 明细页分支
 
@@ -130,7 +139,7 @@ description: 基于已完成的 API 驱动数据迁移核验结果，统一生�
 1. 先把上游结果整理成 canonical JSON；不要直接在自由文本上拼报告。
 2. 运行 `scripts/validate_api_migration_report.py input` 校验输入契约。
 3. 运行 `scripts/render_api_migration_report.py` 生成 HTML 和 JSON。
-4. 运行 `scripts/validate_api_migration_report.py output` 校验章节、分层、UTF-8 和版式。
+4. 运行 `scripts/validate_api_migration_report.py output` 校验章节、分层、UTF-8、版式和分接口隔离。
 5. 若是项目正式报告，按项目规则更新 `reports/index.md`。
 
 ## 兼容策略

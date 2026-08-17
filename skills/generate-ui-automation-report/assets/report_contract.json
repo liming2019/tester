@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "skill": "generate-ui-automation-report",
+  "input": {
+    "summary_required_fields": [
+      "schema_version",
+      "report_type",
+      "generated_at",
+      "counts"
+    ],
+    "summary_counts_required_fields": [
+      "total",
+      "passed",
+      "failed",
+      "blocked"
+    ],
+    "case_required_fields": [
+      "id",
+      "title",
+      "status",
+      "related_cases",
+      "basis",
+      "steps",
+      "pass_criteria",
+      "assertions",
+      "screenshots"
+    ],
+    "assertion_required_fields": [
+      "check",
+      "expected",
+      "actual",
+      "passed"
+    ],
+    "screenshot_required_fields": [
+      "name",
+      "path"
+    ]
+  },
+  "html_required_sections": [
+    "overview",
+    "metrics",
+    "failure-impact",
+    "case-details"
+  ],
+  "quality_gates": [
+    "counts_consistent",
+    "case_titles_present",
+    "assertions_complete",
+    "status_matches_assertions",
+    "screenshots_exist",
+    "screenshot_modal_preview",
+    "sensitive_data_absent",
+    "utf8_without_bom",
+    "no_unicode_escape"
+  ],
+  "rendering_policy": {
+    "fixed": [
+      "data contract",
+      "section order",
+      "case/assertion/evidence traceability",
+      "external quality gates"
+    ],
+    "replaceable": [
+      "colors",
+      "spacing",
+      "font",
+      "non-structural CSS"
+    ]
+  }
+}

@@ -1659,6 +1659,46 @@ def filter_summary_by_interface(value: Any, interface_name: str, contract: dict[
     }
 
 
+def filter_scoped_list_value(
+    items: Any,
+    interface_name: str,
+    contract: dict[str, Any],
+) -> list[Any]:
+    filtered: list[Any] = []
+    for item in as_list(items):
+        if isinstance(item, dict):
+            if matches_interface(item, interface_name, contract):
+                filtered.append(item)
+        elif scope_matches(item, interface_name):
+            filtered.append(item)
+    return filtered
+
+
+def filter_interface_scoped_value(value: Any, interface_name: str, contract: dict[str, Any]) -> Any:
+    if isinstance(value, list):
+        return filter_scoped_list_value(value, interface_name, contract)
+    if not isinstance(value, dict):
+        return value
+    if isinstance(value.get("items"), list):
+        return filter_summary_by_interface(value, interface_name, contract)
+    if matches_interface(value, interface_name, contract):
+        return value
+
+    cloned = dict(value)
+    for key in (
+        "requested_interfaces",
+        "supplement_interfaces",
+        "target_sources",
+        "target_source",
+        "business_keys",
+        "blocked_items",
+        "likely_causes",
+    ):
+        if isinstance(cloned.get(key), list):
+            cloned[key] = filter_scoped_list_value(cloned.get(key), interface_name, contract)
+    return cloned
+
+
 def build_interface_conclusion(entry: dict[str, Any]) -> dict[str, Any]:
     summary = stringify_short(entry.get("summary"))
     reasons = [stringify_short(reason) for reason in as_list(entry.get("reasons")) if stringify_short(reason)]
@@ -2506,6 +2546,16 @@ def interface_view(
 
     for key in contract["difference_groups"]:
         cloned[key] = filter_items_by_interface(data.get(key), interface_name, contract)
+
+    for key in (
+        "source_baseline",
+        "target_sources",
+        "target_source",
+        "business_keys",
+        "blocked_items",
+        "likely_causes",
+    ):
+        cloned[key] = filter_interface_scoped_value(data.get(key), interface_name, contract)
 
     for key in (
         "source_to_staging_summary",
